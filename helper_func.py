@@ -167,19 +167,32 @@ async def get_verify_status(user_id):
 async def update_verify_status(user_id, verify_token="", is_verified=False, verified_time=0, link=""):
     await db.update_verify_status(user_id, verify_token, is_verified, verified_time, link)
 
-async def generate_token(length=10):
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-async def token_expired(verify_status):
-    return VERIFY_EXPIRE < (time.time() - verify_status['verified_time'])
+async def get_shortlink(user_id, link):
+    """
+    Fetch the shortener settings for the user from the database and generate a short link.
+    """
+    # Fetch the shortener settings for the user from the database
+    shortener_data = await self.shortener_data.fetch_shortener(user_id)
 
+    if not shortener_data:
+        return "Shortener settings are not set up for this user."
 
-async def get_shortlink(url, api, link):
-    print(f"{link}")
+    # Get the API key and base URL from the database
+    api = shortener_data.get('api')
+    url = shortener_data.get('site')
+
+    if not api or not url:
+        return "API key or URL is missing in shortener settings."
+
+    # Print the link for debugging
+    print(f"Link to be shortened: {link}")
+
+    # Use the Shortzy API to generate the short link
     shortzy = Shortzy(api_key=api, base_site=url)
-    link = await shortzy.convert(link)
-    return link
+    short_link = await shortzy.convert(link)
 
+    return short_link
 def get_exp_time(seconds):
     periods = [('days', 86400), ('hours', 3600), ('mins', 60), ('secs', 1)]
     result = ''
