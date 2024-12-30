@@ -622,44 +622,61 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 
-elif data == "toggle_token:(on|off)":
-        #if await authoUser(query, query.from_user.id, owner_only=True) :
-        await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+# Assuming query is the callback query object and data is the callback data.
 
-    """
-    Handle the toggle button callback for the shortener token.
-    """
-    try:
-        user_id = callback_query.from_user.id
-        action = callback_query.data.split(":")[1]
-        enable = action == "on"
+# Process toggle ON action
+if data == "toggle_token:on":
+    await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+    enable = True
 
-        # Update the toggle status in the database
-        await client.user_manager.toggle_shortener(user_id, enable)
+    # Update the toggle status in the database
+    await query._client.user_manager.toggle_shortener(query.from_user.id, enable)
 
-        # Determine the new status
-        on_icon = "🟢" if enable else ""
-        off_icon = "🔴" if not enable else ""
+    # Update status text and icons
+    on_icon = "🟢"
+    off_icon = ""
+    status_text = "enabled"
 
-        # Update button
-        button = [
-            [InlineKeyboardButton(f"{on_icon} ON", "toggle_token:on"), InlineKeyboardButton(f"{off_icon} OFF", "toggle_token:off")],
-            [InlineKeyboardButton("⚙️ More Settings ⚙️", "shortener_settings")]
-        ]
+# Process toggle OFF action
+elif data == "toggle_token:off":
+    await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+    enable = False
 
-        # Update the text
-        status_text = "enabled" if enable else "disabled"
-        response_text = f"Your shortener token is now **{status_text}**.\n\nUse the buttons below to toggle the status."
+    # Update the toggle status in the database
+    await query._client.user_manager.toggle_shortener(query.from_user.id, enable)
 
-        # Update the message
-        await callback_query.message.edit_text(
-            text=response_text,
-            reply_markup=InlineKeyboardMarkup(button)
+    # Update status text and icons
+    on_icon = ""
+    off_icon = "🔴"
+    status_text = "disabled"
+
+# Handle shortener settings
+elif data == "shortener_settings":
+    await query.answer("⚙️ Fetching shortener details...")
+
+    # Fetch shortener details from the database
+    user_id = query.from_user.id
+    user_data = await query._client.database['users'].find_one({"_id": user_id})
+
+    if user_data and 'shortener' in user_data:
+        shortener_data = user_data['shortener']
+        site = shortener_data.get('site', 'Not set')
+        api_token = shortener_data.get('api_token', 'Not set')
+        status = shortener_data.get('status', 'Not available')
+
+        response_text = (
+            f"📍 **Shortener Details**\n"
+            f"**Site**: {site}\n"
+            f"**API Token**: {api_token}\n"
+            f"**Status**: {status}"
         )
+    else:
+        response_text = "No shortener details found. Please set up your shortener settings."
 
-        # Acknowledge the callback
-        await callback_query.answer(f"Token has been {status_text}.")
-    except Exception as e:
-        await callback_query.answer(f"Error: {e}", show_alert=True)
-        
-            
+    # Update the message with the fetched shortener details
+    await query.message.edit_text(
+        text=response_text,
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("Back", "back_to_main_menu")]
+        ])
+    )
