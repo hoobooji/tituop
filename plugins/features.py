@@ -442,3 +442,59 @@ async def handle_reqFsub(client: Client, message: Message):
     except Exception as e:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Cʟᴏsᴇ ✖️", callback_data = "close")]])
         await message.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote><b><i>Cᴏɴᴛᴀɴᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ: @rohit_1888</i></b>", reply_markup=reply_markup)
+
+
+@Bot.on_message(filters.command("set_token") & filters.private & is_admin)
+async def set_token(client, message: Message):
+    """
+    Command to set the shortener site and API key.
+    Usage: /set_token <site> <api_key>
+    """
+    try:
+        user_id = message.from_user.id
+        args = message.text.split(maxsplit=2)
+        if len(args) < 3:
+            await message.reply("Usage: /set_token <site> <api_key>")
+            return
+        
+        site, api_key = args[1], args[2]
+        await client.user_manager.update_shortener(user_id, site, api_key)
+        await message.reply(f"Token set successfully:\nSite: {site}\nAPI Key: {api_key}")
+    except Exception as e:
+        await message.reply(f"Error setting token: {e}")
+
+@Bot.on_message(filters.command("token") & filters.private & is_admin)
+async def token_toggle(client, message: Message):
+    """
+    Command to manage shortener token with a toggle button.
+    """
+    try:
+        user_id = message.from_user.id
+        shortener_settings = await client.user_manager.fetch_shortener(user_id)
+
+        if not shortener_settings:
+            await message.reply("No shortener settings found. Use /set_token to configure.")
+            return
+
+        # Determine the current status
+        enabled = shortener_settings.get('enabled', False)
+        on_icon = "🟢" if enabled else ""
+        off_icon = "🔴" if not enabled else ""
+
+        # Prepare button
+        button = [
+            [InlineKeyboardButton(f"{on_icon} ON", "toggle_token:on"), InlineKeyboardButton(f"{off_icon} OFF", "toggle_token:off")],
+            [InlineKeyboardButton("⚙️ More Settings ⚙️", "shortener_settings")]
+        ]
+
+        # Prepare text
+        status_text = "enabled" if enabled else "disabled"
+        response_text = f"Your shortener token is currently **{status_text}**.\n\nUse the buttons below to toggle the status."
+
+        # Send the toggle button
+        await message.reply(
+            text=response_text,
+            reply_markup=InlineKeyboardMarkup(button)
+        )
+    except Exception as e:
+        await message.reply(f"Error: {e}")
