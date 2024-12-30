@@ -45,7 +45,7 @@ class Rohit:
         self.user_data = self.database['users']
         self.banned_user_data = self.database['banned_user']
         self.autho_user_data = self.database['autho_user']
-        self.shortener_data = self.database['shortener_data']
+        self.shortener_data = self.database['shortener']
 
         self.auto_delete_data = self.database['auto_delete']
         self.hide_caption_data = self.database['hide_caption']
