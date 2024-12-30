@@ -619,5 +619,47 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     
         except Exception as e:
             print(f"! Error Occured on callback data = 'chng_req' : {e}")
+
+
+
+elif data == "toggle_token:(on|off)":
+        #if await authoUser(query, query.from_user.id, owner_only=True) :
+        await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+
+    """
+    Handle the toggle button callback for the shortener token.
+    """
+    try:
+        user_id = callback_query.from_user.id
+        action = callback_query.data.split(":")[1]
+        enable = action == "on"
+
+        # Update the toggle status in the database
+        await client.user_manager.toggle_shortener(user_id, enable)
+
+        # Determine the new status
+        on_icon = "🟢" if enable else ""
+        off_icon = "🔴" if not enable else ""
+
+        # Update button
+        button = [
+            [InlineKeyboardButton(f"{on_icon} ON", "toggle_token:on"), InlineKeyboardButton(f"{off_icon} OFF", "toggle_token:off")],
+            [InlineKeyboardButton("⚙️ More Settings ⚙️", "shortener_settings")]
+        ]
+
+        # Update the text
+        status_text = "enabled" if enable else "disabled"
+        response_text = f"Your shortener token is now **{status_text}**.\n\nUse the buttons below to toggle the status."
+
+        # Update the message
+        await callback_query.message.edit_text(
+            text=response_text,
+            reply_markup=InlineKeyboardMarkup(button)
+        )
+
+        # Acknowledge the callback
+        await callback_query.answer(f"Token has been {status_text}.")
+    except Exception as e:
+        await callback_query.answer(f"Error: {e}", show_alert=True)
         
             
