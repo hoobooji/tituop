@@ -80,23 +80,36 @@ class Rohit:
 
     # SHORTENER SETTINGS MANAGEMENT
     async def update_shortener(self, user_id: int, site: str, api_key: str):
+    """
+    Update the shortener site and API key for a user.
+    """
     await self.user_data.update_one(
         {'_id': user_id},
         {'$set': {'shortener.site': site, 'shortener.api': api_key}}
     )
 
     async def toggle_shortener(self, user_id: int, enable: bool):
+    """
+    Enable or disable the shortener functionality for a user.
+    """
     await self.user_data.update_one(
         {'_id': user_id},
         {'$set': {'shortener.enabled': enable}}
     )
 
-    async def get_shortener_settings(self, user_id: int):
-        """Retrieve shortener settings for a user."""
-        user = await self.user_data.find_one({'_id': user_id})
-        if user and 'shortener' in user:
-            return user['shortener']
-        return None
+    async def fetch_shortener(self, user_id: int):
+    """
+    Fetch the shortener settings for a user.
+    Returns a dictionary or None if no settings are found.
+    """
+    user = await self.user_data.find_one({'_id': user_id})
+    if user and 'shortener' in user:
+        return {
+            'site': user['shortener'].get('site'),
+            'api': user['shortener'].get('api'),
+            'enabled': user['shortener'].get('enabled', False)
+        }
+    return None
 
     # VERIFICATION MANAGEMENT
     async def db_verify_status(self, user_id):
