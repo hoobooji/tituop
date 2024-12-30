@@ -80,20 +80,16 @@ class Rohit:
 
     # SHORTENER SETTINGS MANAGEMENT
     async def update_shortener(self, user_id: int, site: str, api_key: str):
-        """Update shortener site and API key for a user."""
-        await self.user_data.update_one(
-            {'_id': user_id},
-            {'$set': {'shortener.site': site, 'shortener.api': api_key}}
-        )
-        return
+    await self.user_data.update_one(
+        {'_id': user_id},
+        {'$set': {'shortener.site': site, 'shortener.api': api_key}}
+    )
 
     async def toggle_shortener(self, user_id: int, enable: bool):
-        """Toggle shortener on or off."""
-        await self.user_data.update_one(
-            {'_id': user_id},
-            {'$set': {'shortener.enabled': enable}}
-        )
-        return
+    await self.user_data.update_one(
+        {'_id': user_id},
+        {'$set': {'shortener.enabled': enable}}
+    )
 
     async def get_shortener_settings(self, user_id: int):
         """Retrieve shortener settings for a user."""
