@@ -78,6 +78,30 @@ class Rohit:
         await self.user_data.delete_one({'_id': user_id})
         return
 
+    # SHORTENER SETTINGS MANAGEMENT
+    async def update_shortener(self, user_id: int, site: str, api_key: str):
+        """Update shortener site and API key for a user."""
+        await self.user_data.update_one(
+            {'_id': user_id},
+            {'$set': {'shortener.site': site, 'shortener.api': api_key}}
+        )
+        return
+
+    async def toggle_shortener(self, user_id: int, enable: bool):
+        """Toggle shortener on or off."""
+        await self.user_data.update_one(
+            {'_id': user_id},
+            {'$set': {'shortener.enabled': enable}}
+        )
+        return
+
+    async def get_shortener_settings(self, user_id: int):
+        """Retrieve shortener settings for a user."""
+        user = await self.user_data.find_one({'_id': user_id})
+        if user and 'shortener' in user:
+            return user['shortener']
+        return None
+
     # VERIFICATION MANAGEMENT
     async def db_verify_status(self, user_id):
         user = await self.user_data.find_one({'_id': user_id})
