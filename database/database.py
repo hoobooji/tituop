@@ -45,6 +45,7 @@ class Rohit:
         self.user_data = self.database['users']
         self.banned_user_data = self.database['banned_user']
         self.autho_user_data = self.database['autho_user']
+        self.shortener_data = db['shortener_data']
 
         self.auto_delete_data = self.database['auto_delete']
         self.hide_caption_data = self.database['hide_caption']
@@ -78,38 +79,43 @@ class Rohit:
         await self.user_data.delete_one({'_id': user_id})
         return
 
-    # SHORTENER SETTINGS MANAGEMENT
+    # Update shortener settings for a user
     async def update_shortener(self, user_id: int, site: str, api_key: str):
-    """
-    Update the shortener site and API key for a user.
-    """
-    await self.user_data.update_one(
-        {'_id': user_id},
-        {'$set': {'shortener.site': site, 'shortener.api': api_key}}
-    )
+        """
+        Update the shortener site and API key for a user.
+        """
+        await self.shortener_data.update_one(
+            {'_id': user_id},
+            {'$set': {'site': site, 'api': api_key}},
+            upsert=True  # Create a new document if one doesn't exist
+        )
 
+    # Enable or disable shortener functionality for a user
     async def toggle_shortener(self, user_id: int, enable: bool):
-    """
-    Enable or disable the shortener functionality for a user.
-    """
-    await self.user_data.update_one(
-        {'_id': user_id},
-        {'$set': {'shortener.enabled': enable}}
-    )
+        """
+        Enable or disable the shortener functionality for a user.
+        """
+        await self.shortener_data.update_one(
+            {'_id': user_id},
+            {'$set': {'enabled': enable}},
+            upsert=True  # Create a new document if one doesn't exist
+        )
 
+    # Fetch the shortener settings for a user
     async def fetch_shortener(self, user_id: int):
-    """
-    Fetch the shortener settings for a user.
-    Returns a dictionary or None if no settings are found.
-    """
-    user = await self.user_data.find_one({'_id': user_id})
-    if user and 'shortener' in user:
-        return {
-            'site': user['shortener'].get('site'),
-            'api': user['shortener'].get('api'),
-            'enabled': user['shortener'].get('enabled', False)
-        }
-    return None
+        """
+        Fetch the shortener settings for a user.
+        Returns a dictionary or None if no settings are found.
+        """
+        user = await self.shortener_data.find_one({'_id': user_id})
+        if user:
+            return {
+                'site': user.get('site'),
+                'api': user.get('api'),
+                'enabled': user.get('enabled', False)
+            }
+        return None
+
 
     # VERIFICATION MANAGEMENT
     async def db_verify_status(self, user_id):
