@@ -666,3 +666,19 @@ elif data == chng_shortener:
         # Enable shortener, prompt for URL and API Key
         await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
         await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
+
+
+elif data == set_shortener_details:
+    if ' ' in message.text:
+        shortener_url, api_key = message.text.split(' ', 1)
+        try:
+            # Save the shortener URL and API Key to the database
+            await db.set_shortener(shortener_url, api_key)
+            await message.reply("Shortener has been successfully set!", reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')]
+            ]))
+        except Exception as e:
+            await message.reply(f"Failed to set shortener details. Error: {e}")
+
+    else:
+        await message.reply("Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
