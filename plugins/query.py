@@ -624,7 +624,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 # Handle shortener settings
-elif data == "shortener_settings":
+elif data == 'shortener_settings':
     await query.answer("⚙️ Fetching shortener details...")
 
     # Fetch shortener details from the database
@@ -653,7 +653,7 @@ elif data == "shortener_settings":
     )
 
 
-elif data == chng_shortener:
+elif data == 'chng_shortener':
     user_id = callback_query.from_user.id
     shortener_details = await db.get_shortener()
 
@@ -699,7 +699,7 @@ elif data == 'set_shortener_details':
 
 
 
-elif data == set_shortener:
+elif data == 'set_shortener':
     try:
         # Simulate the command being run again by calling the same function
         message = query.message  # Access the message where the button was pressed
@@ -733,7 +733,7 @@ elif data == set_shortener:
 
 # Callback Query handler for "Set Verified Time" button
 
-elif data == set_verified_time:
+elif data == 'set_verified_time':
     id = query.from_user.id
 
     if await authoUser(query, id, owner_only=True):
@@ -775,7 +775,7 @@ elif data == set_verified_time:
                 print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
 
 
-elif data == set_tut_video:
+elif data == 'set_tut_video':
     id = query.from_user.id
 
     if await authoUser(query, id, owner_only=True):
