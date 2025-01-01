@@ -3,6 +3,9 @@ off_pic = "https://telegra.ph/file/0d9e590f62b63b51d4bf9.jpg"
 files_cmd_pic = "https://telegra.ph/file/d44f46054250a73053614.jpg"
 autodel_cmd_pic = "https://telegra.ph/file/a64533814021b40057ccd.jpg"
 
+
+SET_SHORTENER_CMD_TXT = "Shortener is {shortener_status}. Use `/setshortener <url> <api_key>` to configure the shortener."
+
 #start message
 START_MSG = """Hello {mention}
 
