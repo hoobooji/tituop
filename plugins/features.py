@@ -498,3 +498,51 @@ async def token_toggle(client, message: Message):
         )
     except Exception as e:
         await message.reply(f"Error: {e}")
+
+@Bot.on_message(filters.command('set_shortener') & filters.private & ~banUser)
+async def set_shortener(client, message):
+    await message.reply_chat_action(ChatAction.TYPING)
+
+    try:
+        # Get current shortener settings from the database
+        shortener_details = await db.get_shortener()
+
+        if shortener_details:
+            shortener_status = "Enabled ✅"
+            mode = 'Disable Shortener ❌'
+        else:
+            shortener_status = "Disabled ❌"
+            mode = 'Enable Shortener ✅'
+
+        # Send the initial settings with options to enable/disable shortener
+        await message.reply_photo(
+            photo=shortener_cmd_pic,
+            caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton('◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
+                [InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener_cmd'), InlineKeyboardButton('Close ✖️', callback_data='close')]
+            ]),
+            message_effect_id=5107584321108051014 #👍
+        )
+    except Exception as e:
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+        await message.reply(f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>", reply_markup=reply_markup)
+
+
+
+
+@Bot.on_message(filters.text & filters.private & ~banUser)
+async def set_shortener_details(client, message):
+    if ' ' in message.text:
+        shortener_url, api_key = message.text.split(' ', 1)
+        try:
+            # Save the shortener URL and API Key to the database
+            await db.set_shortener(shortener_url, api_key)
+            await message.reply("Shortener has been successfully set!", reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')]
+            ]))
+        except Exception as e:
+            await message.reply(f"Failed to set shortener details. Error: {e}")
+
+    else:
+        await message.reply("Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
