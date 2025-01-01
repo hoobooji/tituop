@@ -499,7 +499,7 @@ async def token_toggle(client, message: Message):
     except Exception as e:
         await message.reply(f"Error: {e}")
 
-@Bot.on_message(filters.command('token') & filters.private & ~banUser)
+@Bot.on_message(filters.command('token') & filters.private & filters.user(OWNER_ID))
 async def set_shortener(client, message):
     await message.reply_chat_action(ChatAction.TYPING)
 
