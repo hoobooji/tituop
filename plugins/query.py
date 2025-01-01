@@ -637,21 +637,21 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 #status = "Active" if shortener_data.get('active', False) else "Inactive"
 
                 #response_text = (
-            f"**Shortener Details**\n"
-            f"**Site**: {site}\n"
-            f"**API Token**: {api_token}\n"
-            f"**Status**: {status}"
+            #f"**Shortener Details**\n"
+            #f"**Site**: {site}\n"
+            #f"**API Token**: {api_token}\n"
+            #f"**Status**: {status}"
                 )
             #else:
                 #response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
             #await query.message.edit_text(
-                text=response_text,
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('Back', callback_data='set_shortener')]
-                ])
-                    )
+                #text=response_text,
+                #reply_markup=InlineKeyboardMarkup([
+                   # [InlineKeyboardButton('Back', #callback_data='set_shortener')]
+               # ])
+                    #)
 
 
 
