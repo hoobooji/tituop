@@ -668,7 +668,7 @@ elif data == 'chng_shortener':  # Toggle shortener status
         await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
 
 
-elif data == 'set_shortener_details':
+if data == 'set_shortener_details':
     if ' ' in message.text:
         shortener_url, api_key = message.text.split(' ', 1)
         try:
