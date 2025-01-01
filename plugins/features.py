@@ -499,7 +499,7 @@ async def token_toggle(client, message: Message):
     except Exception as e:
         await message.reply(f"Error: {e}")
 
-@Bot.on_message(filters.command('set_shortener') & filters.private & ~banUser)
+@Bot.on_message(filters.command('token') & filters.private & ~banUser)
 async def set_shortener(client, message):
     await message.reply_chat_action(ChatAction.TYPING)
 
@@ -520,14 +520,14 @@ async def set_shortener(client, message):
             caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton('◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
-                [InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener_cmd'), InlineKeyboardButton('Close ✖️', callback_data='close')]
+                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener_cmd')],
+                [InlineKeyboardButton('Close ✖️', callback_data='close')]
             ]),
             message_effect_id=5107584321108051014 #👍
         )
     except Exception as e:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
         await message.reply(f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>", reply_markup=reply_markup)
-
 
 
 
