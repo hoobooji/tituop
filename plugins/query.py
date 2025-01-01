@@ -648,7 +648,7 @@ elif data == 'shortener_settings':
     await query.message.edit_text(
         text=response_text,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Back", "back_to_main_menu")]
+            [InlineKeyboardButton('Back', callback_data='set_shortener')]
         ])
     )
 
@@ -692,7 +692,7 @@ elif data == 'set_shortener_details':
         await message.reply(
             "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # 'Back' button to go back
+                [InlineKeyboardButton('Back', callback_data='set_shortener')]  # 'Back' button to go back
             ])
         )
 
