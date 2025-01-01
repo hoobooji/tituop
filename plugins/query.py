@@ -641,7 +641,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             #f"**Site**: {site}\n"
             #f"**API Token**: {api_token}\n"
             #f"**Status**: {status}"
-                )
+                #)
             #else:
                 #response_text = "No shortener details found. Please set up your shortener settings."
 
