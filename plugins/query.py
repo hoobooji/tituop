@@ -624,38 +624,38 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 #Handle shortener setting
-        #elif data == 'shortener_settings':
-            #await query.answer("💫 Fetching Shortener details....")
+         elif data == "shortener_settings":
+             await query.answer("💫 Fetching Shortener details....")
     
 
     # Fetch shortener details from the database
-            #shortener_data = await db.get_shortener()  # Fetch shortener details using the method
+             shortener_data = await db.get_shortener()  # Fetch shortener details using the method
 
-            #if shortener_data:
-                #site = shortener_data.get('shortener_url', 'Not set')
-                 #api_token = shortener_data.get('api_key', 'Not set')
-                #status = "Active" if shortener_data.get('active', False) else "Inactive"
+             if shortener_data:
+                 site = shortener_data.get('shortener_url', 'Not set')
+                 api_token = shortener_data.get('api_key', 'Not set')
+                 status = "Active" if shortener_data.get('active', False) else "Inactive"
 
-                #response_text = (
-            #f"**Shortener Details**\n"
-            #f"**Site**: {site}\n"
-            #f"**API Token**: {api_token}\n"
-            #f"**Status**: {status}"
-                #)
-            #else:
-                #response_text = "No shortener details found. Please set up your shortener settings."
+                 response_text = (
+             f"**Shortener Details**\n"
+             f"**Site**: {site}\n"
+             f"**API Token**: {api_token}\n"
+             f"**Status**: {status}"
+                 )
+             else:
+                 response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
-            #await query.message.edit_text(
-                #text=response_text,
-                #reply_markup=InlineKeyboardMarkup([
-                   # [InlineKeyboardButton('Back', #callback_data='set_shortener')]
-               # ])
-                    #)
+             await query.message.edit_text(
+                 text=response_text,
+                 reply_markup=InlineKeyboardMarkup([
+                     [InlineKeyboardButton('Back',  callback_data='set_shortener')]
+                 ])
+                     )
 
 
 
-        elif data == 'chng_shortener':  # Toggle shortener status
+        elif data == "chng_shortener":  # Toggle shortener status
             user_id = callback_query.from_user.id
             shortener_details = await db.get_shortener()
 
@@ -701,7 +701,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 
-        elif data == 'set_shortener':
+        elif data == "set_shortener":
             try:
         # Simulate the command being run again by calling the same function
                 message = query.message  # Access the message where the button was pressed
@@ -735,7 +735,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 # Callback Query handler for "Set Verified Time" button
 
-        elif data == 'set_verified_time':
+        elif data == "set_verified_time":
             id = query.from_user.id
 
             if await authoUser(query, id, owner_only=True):
@@ -777,7 +777,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                         print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
 
 
-        elif data == 'set_tut_video':
+        elif data == "set_tut_video":
             id = query.from_user.id
 
             if await authoUser(query, id, owner_only=True):
