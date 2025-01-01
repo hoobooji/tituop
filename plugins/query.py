@@ -733,7 +733,7 @@ elif data == 'set_shortener':
 
 # Callback Query handler for "Set Verified Time" button
 
-elif data == 'set_verified_time':
+if data == 'set_verified_time':
     id = query.from_user.id
 
     if await authoUser(query, id, owner_only=True):
@@ -775,7 +775,7 @@ elif data == 'set_verified_time':
                 print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
 
 
-elif data == 'set_tut_video':
+if data == 'set_tut_video':
     id = query.from_user.id
 
     if await authoUser(query, id, owner_only=True):
