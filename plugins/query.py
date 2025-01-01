@@ -624,29 +624,29 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 #Handle shortener setting
-        data == 'shortener_settings':
-            await query.answer("💫 Fetching Shortener details....")
+        #elif data == 'shortener_settings':
+            #await query.answer("💫 Fetching Shortener details....")
     
 
     # Fetch shortener details from the database
-            shortener_data = await db.get_shortener()  # Fetch shortener details using the method
+            #shortener_data = await db.get_shortener()  # Fetch shortener details using the method
 
-            if shortener_data:
-                site = shortener_data.get('shortener_url', 'Not set')
-                api_token = shortener_data.get('api_key', 'Not set')
-                status = "Active" if shortener_data.get('active', False) else "Inactive"
+            #if shortener_data:
+                #site = shortener_data.get('shortener_url', 'Not set')
+                 #api_token = shortener_data.get('api_key', 'Not set')
+                #status = "Active" if shortener_data.get('active', False) else "Inactive"
 
-                response_text = (
+                #response_text = (
             f"**Shortener Details**\n"
             f"**Site**: {site}\n"
             f"**API Token**: {api_token}\n"
             f"**Status**: {status}"
                 )
-            else:
-                response_text = "No shortener details found. Please set up your shortener settings."
+            #else:
+                #response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
-            await query.message.edit_text(
+            #await query.message.edit_text(
                 text=response_text,
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton('Back', callback_data='set_shortener')]
