@@ -624,7 +624,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 #Handle shortener settings
-data.startswith("shortener_settings"):
+data == 'shortener_settings':
     await query.answer("💫 Fetching Shortener details....")
 
     # Fetch shortener details from the database
@@ -651,7 +651,7 @@ data.startswith("shortener_settings"):
         ])
     )
 
-elif data.startswith("chng_shortener"):  # Toggle shortener status
+data == 'chng_shortener':  # Toggle shortener status
     user_id = query.from_user.id
     shortener_details = await db.get_shortener()
 
@@ -689,7 +689,7 @@ elif data == "set_shortener_details":
             ])
         )
 
-elif data.startswith("set_shortener"):
+data == 'set_shortener':
     try:
         message = query.message
         shortener_details = await db.get_shortener()
@@ -717,7 +717,7 @@ elif data.startswith("set_shortener"):
             ])
         )
 
-elif data.startswith("set_verified_time"):
+data == 'set_verified_time':
     id = query.from_user.id
     if await authoUser(query, id, owner_only=True):
         try:
@@ -740,7 +740,7 @@ elif data.startswith("set_verified_time"):
         except Exception as e:
             await query.message.reply(f"Error: {e}")
 
-elif data.startswith("set_tut_video"):
+data == 'set_tut_video':
     id = query.from_user.id
     if await authoUser(query, id, owner_only=True):
         try:
