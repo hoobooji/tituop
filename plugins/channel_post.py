@@ -12,7 +12,7 @@ from helper_func import *
 @Bot.on_message(filters.private & is_admin & ~filters.command([
     'start', 'users', 'broadcast', 'batch', 'genlink', 'stats', 'addpaid', 'removepaid', 'listpaid',
     'help', 'cmd', 'info', 'add_fsub', 'fsub_chnl', 'restart', 'del_fsub', 'add_admins', 'del_admins', 
-    'admin_list', 'cancel', 'auto_del', 'forcesub', 'files', 'add_banuser', 'del_banuser', 'banuser_list', 
+    'admin_list', 'cancel', 'auto_del', 'forcesub', 'files', 'add_banuser', 'token', 'del_banuser', 'banuser_list', 
     'status', 'req_fsub', 'myplan'
 ]))
 async def channel_post(client: Client, message: Message):
