@@ -7,7 +7,7 @@ from helper_func import is_admin, banUser
 from plugins.FORMATS import *
 from plugins.autoDelete import convert_time
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from config import OWNER_ID
+from config import OWNER_ID, START_PIC
 from pyrogram import Client, filters
 from database.database import db 
 from plugins.query import *
@@ -517,7 +517,7 @@ async def set_shortener(client, message):
 
         # Send the initial settings with options to enable/disable shortener, set verified time, and tutorial video
         await message.reply_photo(
-            photo=shortener_cmd_pic,
+            photo=START_PIC,
             caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton('◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
