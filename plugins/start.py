@@ -154,22 +154,38 @@ async def start_command(client: Client, message: Message):
                 asyncio.create_task(auto_del_notification(client.username, last_message, DEL_TIMER, message.command[1]))
 
         elif string.startswith("get"):
-            if not is_premium:
-                if not verify_status['is_verified']:
-                    token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
-                    await update_verify_status(id, verify_token=token, link="")
-                    link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
-                    btn = [
-                        [InlineKeyboardButton("Click here", url=link), InlineKeyboardButton('How to use the bot', url=TUT_VID)],
-                        [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
-                    ]
-                    await message.reply(
-                        f"Your Ads token is expired or invalid. Please verify to access the files.\n\nToken Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\nWhat is the token?\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 Hours after passing the ad.",
-                        reply_markup=InlineKeyboardMarkup(btn),
-                        protect_content=False,
-                        quote=True
-                    )
-                    return
+    if not is_premium:
+        if not verify_status['is_verified']:
+            # Fetch shortener details from the database
+            shortener_details = await db.get_shortener()
+            if shortener_details:
+                # Generate token and shortener link if details are available
+                token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
+                await update_verify_status(id, verify_token=token, link="")
+                
+                link = await get_shortlink(
+                    shortener_details["shortener_url"],
+                    shortener_details["api_key"],
+                    f'https://telegram.dog/{client.username}?start=verify_{token}'
+                )
+                
+                btn = [
+                    [InlineKeyboardButton("Click here", url=link), InlineKeyboardButton('How to use the bot', url=TUT_VID)],
+                    [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
+                ]
+                await message.reply(
+                    f"Your Ads token is expired or invalid. Please verify to access the files.\n\n"
+                    f"Token Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\n"
+                    f"What is the token?\n\n"
+                    f"This is an ads token. If you pass 1 ad, you can use the bot for 24 hours after passing the ad.",
+                    reply_markup=InlineKeyboardMarkup(btn),
+                    protect_content=False,
+                    quote=True
+                )
+                return
+            else:
+                # If no shortener is configured, proceed as verified
+                await db.update_verify_status(id, is_verified=True, verified_time=time.time())
 
             try:
                 base64_string = text.split(" ", 1)[1]
