@@ -162,15 +162,22 @@ async def start_command(client: Client, message: Message):
                 # Generate token and shortener link if details are available
                 token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
                 await update_verify_status(id, verify_token=token, link="")
-                
+
                 link = await get_shortlink(
                     shortener_details["shortener_url"],
                     shortener_details["api_key"],
                     f'https://telegram.dog/{client.username}?start=verify_{token}'
                 )
-                
+
+                # Fetch tutorial video URL from the database
+                tut_vid_url = await db.get_tut_video()
+
+                # Default to TUT_VID if no video URL is found in the database
+                if not tut_vid_url:
+                    tut_vid_url = TUT_VID
+
                 btn = [
-                    [InlineKeyboardButton("Click here", url=link), InlineKeyboardButton('How to use the bot', url=TUT_VID)],
+                    [InlineKeyboardButton("Click here", url=link), InlineKeyboardButton('How to use the bot', url=tut_vid_url)],
                     [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
                 ]
                 await message.reply(
@@ -186,7 +193,6 @@ async def start_command(client: Client, message: Message):
             else:
                 # If no shortener is configured, proceed as verified
                 await db.update_verify_status(id, is_verified=True, verified_time=time.time())
-
             try:
                 base64_string = text.split(" ", 1)[1]
             except:
