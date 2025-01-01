@@ -695,3 +695,37 @@ elif data == 'set_shortener_details':
                 [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # 'Back' button to go back
             ])
         )
+
+
+
+
+elif data == set_shortener:
+    try:
+        # Simulate the command being run again by calling the same function
+        message = query.message  # Access the message where the button was pressed
+
+        # Now, run the same logic as in the set_shortener command
+        shortener_details = await db.get_shortener()
+
+        if shortener_details:
+            shortener_status = "Enabled ✅"
+            mode = 'Disable Shortener ❌'
+        else:
+            shortener_status = "Disabled ❌"
+            mode = 'Enable Shortener ✅'
+
+        # Refresh the settings and update the message with new content
+        await message.edit_photo(
+            photo=shortener_cmd_pic,
+            caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton('◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
+                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
+                [InlineKeyboardButton('Close ✖️', callback_data='close')]
+            ])
+        )
+    except Exception as e:
+        await query.message.edit_text(
+            f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+        )
