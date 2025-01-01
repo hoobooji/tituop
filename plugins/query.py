@@ -628,14 +628,12 @@ elif data == "shortener_settings":
     await query.answer("⚙️ Fetching shortener details...")
 
     # Fetch shortener details from the database
-    user_id = query.from_user.id
-    user_data = await query._client.database['users'].find_one({"_id": user_id})
+    shortener_data = await db.get_shortener()  # Fetch shortener details using the method
 
-    if user_data and 'shortener' in user_data:
-        shortener_data = user_data['shortener']
-        site = shortener_data.get('site', 'Not set')
-        api_token = shortener_data.get('api_token', 'Not set')
-        status = shortener_data.get('status', 'Not available')
+    if shortener_data:
+        site = shortener_data.get('shortener_url', 'Not set')
+        api_token = shortener_data.get('api_key', 'Not set')
+        status = "Active" if shortener_data.get('active', False) else "Inactive"
 
         response_text = (
             f"📍 **Shortener Details**\n"
