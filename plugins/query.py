@@ -668,17 +668,30 @@ elif data == chng_shortener:
         await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
 
 
-elif data == set_shortener_details:
+elif data == 'set_shortener_details':
     if ' ' in message.text:
         shortener_url, api_key = message.text.split(' ', 1)
         try:
             # Save the shortener URL and API Key to the database
             await db.set_shortener(shortener_url, api_key)
-            await message.reply("Shortener has been successfully set!", reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')]
-            ]))
+            await message.reply(
+                "Shortener has been successfully set!",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')],
+                    [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # Add the 'Back' button here
+                ])
+            )
         except Exception as e:
-            await message.reply(f"Failed to set shortener details. Error: {e}")
-
+            await message.reply(
+                f"Failed to set shortener details. Error: {e}",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # 'Back' button to go back
+                ])
+            )
     else:
-        await message.reply("Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
+        await message.reply(
+            "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # 'Back' button to go back
+            ])
+        )
