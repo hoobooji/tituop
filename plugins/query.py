@@ -678,7 +678,7 @@ elif data == 'set_shortener_details':
                 "Shortener has been successfully set!",
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')],
-                    [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # Add the 'Back' button here
+                    [InlineKeyboardButton('Back', callback_data='set_shortener')]  # Add the 'Back' button here
                 ])
             )
         except Exception as e:
