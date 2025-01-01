@@ -11,7 +11,8 @@ from bot import Bot
 dbclient = pymongo.MongoClient(DB_URI)
 database = dbclient[DB_NAME]
 
-
+
+
 collection = database['premium-users']
 
 default_verify = {
@@ -60,90 +61,90 @@ class Rohit:
         self.rqst_fsub_Channel_data = self.database['request_forcesub_channel']
         self.store_reqLink_data = self.database['store_reqLink']
 
-    #Shortener Token 
-async def set_shortener(url, api):
-    try:
-        # Ensure only one active shortener exists
-        existing = await self.shortener_data.find_one({"active": True})
-        if existing:
-            # Update existing active shortener
-            await self.shortener_data.update_one(
-                {"_id": existing["_id"]},
-                {"$set": {"shortener_url": url, "api_key": api, "updated_at": datetime.utcnow()}}
+    # Shortener Token
+    async def set_shortener(self, url, api):
+        try:
+            # Ensure only one active shortener exists
+            existing = await self.shortener_data.find_one({"active": True})
+            if existing:
+                # Update existing active shortener
+                await self.shortener_data.update_one(
+                    {"_id": existing["_id"]},
+                    {"$set": {"shortener_url": url, "api_key": api, "updated_at": datetime.utcnow()}}
+                )
+            else:
+                # Insert a new active shortener
+                await self.shortener_data.insert_one({
+                    "shortener_url": url,
+                    "api_key": api,
+                    "active": True,
+                    "created_at": datetime.utcnow()
+                })
+            return True
+        except Exception as e:
+            logging.error(f"Error setting shortener details: {e}")
+            return False
+
+    async def get_shortener(self):
+        try:
+            # Retrieve the active shortener details
+            return await self.shortener_data.find_one({"active": True})
+        except Exception as e:
+            logging.error(f"Error fetching shortener details: {e}")
+            return None
+
+    async def deactivate_shortener(self):
+        try:
+            # Deactivate all active shorteners
+            await self.shortener_data.update_many({"active": True}, {"$set": {"active": False}})
+            return True
+        except Exception as e:
+            logging.error(f"Error deactivating shorteners: {e}")
+            return False
+
+    async def set_verified_time(self, verified_time: int):
+        try:
+            # Update the verified time in the database
+            result = await self.settings_data.update_one(
+                {"_id": "verified_time"},  # Assuming there's an entry with this ID for settings
+                {"$set": {"verified_time": verified_time}},
+                upsert=True  # Create the document if it doesn't exist
             )
-        else:
-            # Insert a new active shortener
-            await self.shortener_data.insert_one({
-                "shortener_url": url,
-                "api_key": api,
-                "active": True,
-                "created_at": datetime.utcnow()
-            })
-        return True
-    except Exception as e:
-        logging.error(f"Error setting shortener details: {e}")
-        return False
+            return result.modified_count > 0  # Return True if the update was successful
+        except Exception as e:
+            logging.error(f"Error updating verified time: {e}")
+            return False
 
-async def get_shortener():
-    try:
-        # Retrieve the active shortener details
-        return await self.shortener_data.find_one({"active": True})
-    except Exception as e:
-        logging.error(f"Error fetching shortener details: {e}")
-        return None
+    async def get_verified_time(self):
+        try:
+            # Retrieve the verified time from the database
+            settings = await self.settings_data.find_one({"_id": "verified_time"})
+            return settings.get("verified_time", None) if settings else None
+        except Exception as e:
+            logging.error(f"Error fetching verified time: {e}")
+            return None
 
-async def deactivate_shortener():
-    try:
-        # Deactivate all active shorteners
-        await self.shortener_data.update_many({"active": True}, {"$set": {"active": False}})
-        return True
-    except Exception as e:
-        logging.error(f"Error deactivating shorteners: {e}")
-        return False
+    async def set_tut_video(self, video_url: str):
+        try:
+            # Update the tutorial video URL in the database
+            result = await self.settings_data.update_one(
+                {"_id": "tutorial_video"},  # Assuming there's an entry with this ID for settings
+                {"$set": {"tutorial_video_url": video_url}},
+                upsert=True  # Create the document if it doesn't exist
+            )
+            return result.modified_count > 0  # Return True if the update was successful
+        except Exception as e:
+            logging.error(f"Error updating tutorial video URL: {e}")
+            return False
 
-async def set_verified_time(self, verified_time: int):
-    try:
-        # Update the verified time in the database
-        result = await self.settings_data.update_one(
-            {"_id": "verified_time"},  # Assuming there's an entry with this ID for settings
-            {"$set": {"verified_time": verified_time}},
-            upsert=True  # Create the document if it doesn't exist
-        )
-        return result.modified_count > 0  # Return True if the update was successful
-    except Exception as e:
-        logging.error(f"Error updating verified time: {e}")
-        return False
-
-async def get_verified_time(self):
-    try:
-        # Retrieve the verified time from the database
-        settings = await self.settings_data.find_one({"_id": "verified_time"})
-        return settings.get("verified_time", None) if settings else None
-    except Exception as e:
-        logging.error(f"Error fetching verified time: {e}")
-        return None
-
-async def set_tut_video(self, video_url: str):
-    try:
-        # Update the tutorial video URL in the database
-        result = await self.settings_data.update_one(
-            {"_id": "tutorial_video"},  # Assuming there's an entry with this ID for settings
-            {"$set": {"tutorial_video_url": video_url}},
-            upsert=True  # Create the document if it doesn't exist
-        )
-        return result.modified_count > 0  # Return True if the update was successful
-    except Exception as e:
-        logging.error(f"Error updating tutorial video URL: {e}")
-        return False
-
-async def get_tut_video(self):
-    try:
-        # Retrieve the tutorial video URL from the database
-        settings = await self.settings_data.find_one({"_id": "tutorial_video"})
-        return settings.get("tutorial_video_url", None) if settings else None
-    except Exception as e:
-        logging.error(f"Error fetching tutorial video URL: {e}")
-        return None
+    async def get_tut_video(self):
+        try:
+            # Retrieve the tutorial video URL from the database
+            settings = await self.settings_data.find_one({"_id": "tutorial_video"})
+            return settings.get("tutorial_video_url", None) if settings else None
+        except Exception as e:
+            logging.error(f"Error fetching tutorial video URL: {e}")
+            return None
 
     # USER MANAGEMENT
     async def present_user(self, user_id: int):
