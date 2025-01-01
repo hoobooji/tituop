@@ -625,10 +625,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 # Handle shortener settings
 if data == 'shortener_settings':
-    await query.answer("⚙️ Fetching shortener details...")
+     query.answer("⚙️ Fetching shortener details...")
 
     # Fetch shortener details from the database
-    shortener_data = await db.get_shortener()  # Fetch shortener details using the method
+    shortener_data = db.get_shortener()  # Fetch shortener details using the method
 
     if shortener_data:
         site = shortener_data.get('shortener_url', 'Not set')
@@ -645,7 +645,7 @@ if data == 'shortener_settings':
         response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
-    await query.message.edit_text(
+    query.message.edit_text(
         text=response_text,
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton('Back', callback_data='set_shortener')]
