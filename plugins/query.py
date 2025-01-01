@@ -622,33 +622,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 
-# Assuming query is the callback query object and data is the callback data.
-
-# Process toggle ON action
-if data == "toggle_token:on":
-    await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
-    enable = True
-
-    # Update the toggle status in the database
-    await query._client.user_manager.toggle_shortener(query.from_user.id, enable)
-
-    # Update status text and icons
-    on_icon = "🟢"
-    off_icon = ""
-    status_text = "enabled"
-
-# Process toggle OFF action
-elif data == "toggle_token:off":
-    await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
-    enable = False
-
-    # Update the toggle status in the database
-    await query._client.user_manager.toggle_shortener(query.from_user.id, enable)
-
-    # Update status text and icons
-    on_icon = ""
-    off_icon = "🔴"
-    status_text = "disabled"
 
 # Handle shortener settings
 elif data == "shortener_settings":
@@ -680,3 +653,18 @@ elif data == "shortener_settings":
             [InlineKeyboardButton("Back", "back_to_main_menu")]
         ])
     )
+
+
+elif data == chng_shortener:
+    user_id = callback_query.from_user.id
+    shortener_details = await db.get_shortener()
+
+    # Toggle the shortener status in the database
+    if shortener_details:
+        # Disable shortener
+        await db.set_shortener("", "")
+        await callback_query.answer("Shortener Disabled ❌", show_alert=True)
+    else:
+        # Enable shortener, prompt for URL and API Key
+        await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
+        await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
