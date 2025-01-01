@@ -59,7 +59,46 @@ class Rohit:
         self.rqst_fsub_Channel_data = self.database['request_forcesub_channel']
         self.store_reqLink_data = self.database['store_reqLink']
 
+    #Shortener Token 
+async def set_shortener(url, api):
+    try:
+        # Ensure only one active shortener exists
+        existing = await self.shortener_data.find_one({"active": True})
+        if existing:
+            # Update existing active shortener
+            await self.shortener_data.update_one(
+                {"_id": existing["_id"]},
+                {"$set": {"shortener_url": url, "api_key": api, "updated_at": datetime.utcnow()}}
+            )
+        else:
+            # Insert a new active shortener
+            await self.shortener_data.insert_one({
+                "shortener_url": url,
+                "api_key": api,
+                "active": True,
+                "created_at": datetime.utcnow()
+            })
+        return True
+    except Exception as e:
+        logging.error(f"Error setting shortener details: {e}")
+        return False
 
+async def get_shortener():
+    try:
+        # Retrieve the active shortener details
+        return await self.shortener_data.find_one({"active": True})
+    except Exception as e:
+        logging.error(f"Error fetching shortener details: {e}")
+        return None
+
+async def deactivate_shortener():
+    try:
+        # Deactivate all active shorteners
+        await self.shortener_data.update_many({"active": True}, {"$set": {"active": False}})
+        return True
+    except Exception as e:
+        logging.error(f"Error deactivating shorteners: {e}")
+        return False
 
     # USER MANAGEMENT
     async def present_user(self, user_id: int):
