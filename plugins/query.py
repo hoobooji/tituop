@@ -623,12 +623,12 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 
-# Handle shortener settings
-if data == 'shortener_settings':
-     query.answer("⚙️ Fetching shortener details...")
+#Handle shortener settings
+elif data == 'shortener_settings':
+    await query.answer("âš™ï¸ Fetching shortener details...")
 
     # Fetch shortener details from the database
-    shortener_data = db.get_shortener()  # Fetch shortener details using the method
+    shortener_data = await db.get_shortener()  # Fetch shortener details using the method
 
     if shortener_data:
         site = shortener_data.get('shortener_url', 'Not set')
@@ -636,7 +636,7 @@ if data == 'shortener_settings':
         status = "Active" if shortener_data.get('active', False) else "Inactive"
 
         response_text = (
-            f"📍 **Shortener Details**\n"
+            f"ðŸ“ **Shortener Details**\n"
             f"**Site**: {site}\n"
             f"**API Token**: {api_token}\n"
             f"**Status**: {status}"
@@ -645,12 +645,13 @@ if data == 'shortener_settings':
         response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
-    query.message.edit_text(
+    await query.message.edit_text(
         text=response_text,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton('Back', callback_data='set_shortener')]
+            [InlineKeyboardButton("Back", "back_to_main_menu")]
         ])
     )
+
 
 
 elif data == 'chng_shortener':  # Toggle shortener status
