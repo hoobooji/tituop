@@ -637,7 +637,7 @@ elif data.startswith"shortener_settings":
         status = "Active" if shortener_data.get('active', False) else "Inactive"
 
         response_text = (
-            f"ðŸ“ **Shortener Details**\n"
+            f"**Shortener Details**\n"
             f"**Site**: {site}\n"
             f"**API Token**: {api_token}\n"
             f"**Status**: {status}"
@@ -649,7 +649,7 @@ elif data.startswith"shortener_settings":
     await query.message.edit_text(
         text=response_text,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Back", "back_to_main_menu")]
+            [InlineKeyboardButton('Back', callback_data='set_shortener')]
         ])
     )
 
