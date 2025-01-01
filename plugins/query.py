@@ -729,3 +729,26 @@ elif data == set_shortener:
             f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
         )
+
+
+# Callback Query handler for "Set Verified Time" button
+
+elif data == set_verified_time:
+    await query.answer("Please send the verified time in minutes.")
+
+    
+# Wait for the user to input the time
+    @Bot.on_message(filters.private & filters.text)
+    async def verify_time_input(client, message):
+        try:
+            verified_time = int(message.text)  # Assuming the user sends the time in minutes as an integer
+            if verified_time > 0:
+                # Save to the database
+                await db.update_verified_time(verified_time)
+                await message.reply(f"Verified time has been set to {verified_time} minutes.", reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("Back", callback_data="set_shortener")]
+                ]))
+            else:
+                await message.reply("Please enter a valid positive number for the verified time.")
+        except ValueError:
+            await message.reply("Invalid input. Please send a number for the verified time.")
