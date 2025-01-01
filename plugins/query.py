@@ -734,21 +734,80 @@ elif data == set_shortener:
 # Callback Query handler for "Set Verified Time" button
 
 elif data == set_verified_time:
-    await query.answer("Please send the verified time in minutes.")
+    id = query.from_user.id
 
-    
-# Wait for the user to input the time
-    @Bot.on_message(filters.private & filters.text)
-    async def verify_time_input(client, message):
+    if await authoUser(query, id, owner_only=True):
         try:
-            verified_time = int(message.text)  # Assuming the user sends the time in minutes as an integer
-            if verified_time > 0:
-                # Save to the database
-                await db.update_verified_time(verified_time)
-                await message.reply(f"Verified time has been set to {verified_time} minutes.", reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("Back", callback_data="set_shortener")]
-                ]))
+            # Fetch the current verified time from the database
+            verified_time_seconds = await db.get_verified_time()
+            current_verified_time = convert_time(verified_time_seconds)
+
+            # Prompt the user to set the new verified time (in seconds)
+            set_msg = await client.ask(
+                chat_id=id,
+                text=f'<b><blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {current_verified_time}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs ᴡɪᴛʜɪɴ 1 ᴍɪɴᴜᴛᴇ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></b></blockquote>',
+                timeout=60
+            )
+
+            del_timer = set_msg.text.split()
+
+            if len(del_timer) == 1 and del_timer[0].isdigit():
+                # Convert user input into integer
+                verified_time = int(del_timer[0])
+
+                # Save the new verified time to the database
+                await db.set_verified_time(verified_time)
+
+                # Convert to human-readable format and notify the user
+                converted_time = convert_time(verified_time)
+                await set_msg.reply(f"<b><i>Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {converted_time}</blockquote></b>")
             else:
-                await message.reply("Please enter a valid positive number for the verified time.")
-        except ValueError:
-            await message.reply("Invalid input. Please send a number for the verified time.")
+                markup = [[InlineKeyboardButton('◈ Sᴇᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ ⏱', callback_data='set_verified_time')]]
+                return await set_msg.reply(
+                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+
+        except Exception as e:
+            try:
+                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                print(f"! Error Occurred on callback data = 'set_verified_time' : {e}")
+            except:
+                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
+
+
+elif data == set_tut_video:
+    id = query.from_user.id
+
+    if await authoUser(query, id, owner_only=True):
+        try:
+            # Fetch the current tutorial video URL from the database
+            current_video_url = await db.get_tut_video()
+
+            # Prompt the user to input the new tutorial video URL
+            set_msg = await client.ask(
+                chat_id=id,
+                text=f'<b><blockquote>⏳ Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {current_video_url if current_video_url else "Not Set"}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ URL.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></b></blockquote>',
+                timeout=60
+            )
+
+            # Validate the user input for a valid URL
+            video_url = set_msg.text.strip()
+
+            if video_url.startswith("http") and "://" in video_url:
+                # Save the new tutorial video URL to the database
+                await db.set_tut_video(video_url)
+
+                # Confirm the update to the user
+                await set_msg.reply(f"<b><i>Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📹 Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {video_url}</blockquote></b>")
+            else:
+                markup = [[InlineKeyboardButton('◈ Sᴇᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL 📹', callback_data='set_tut_video')]]
+                return await set_msg.reply(
+                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ʟɪɴᴋ ᴛᴏ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+
+        except Exception as e:
+            try:
+                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                print(f"! Error Occurred on callback data = 'set_tut_video' : {e}")
+            except:
+                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                print(f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
