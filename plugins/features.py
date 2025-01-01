@@ -520,7 +520,7 @@ async def set_shortener(client, message):
             caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton('◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
-                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener_cmd')],
+                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
             ]),
             message_effect_id=5107584321108051014 #👍
