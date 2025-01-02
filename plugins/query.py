@@ -668,34 +668,46 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     # Handle shortener settings
     elif data == "shortener_settings":
-        await query.answer("💫 Fetching Shortener details....")
+        if await authoUser(query, query.from_user.id, owner_only=True):
+            await query.answer("💫 Fetching Shortener details....")
 
-    # Fetch shortener details from the database
-    # Fetch shortener details using the method
-        shortener_data = await db.get_shortener()
+            # Fetch shortener details
+            shortener_data = await db.get_shortener()
+            verified_time = await db.get_verified_time()
+            tut_video = await db.get_tut_video()
 
-        if shortener_data:
-            site = shortener_data.get('shortener_url', 'Not set')
-            api_token = shortener_data.get('api_key', 'Not set')
-            status = "Active" if shortener_data.get(
-                'active', False) else "Inactive"
+            if shortener_data:
+                site = shortener_data.get('shortener_url', 'Not set')
+                api_token = shortener_data.get('api_key', 'Not set')
+                status = "Active" if shortener_data.get('active', False) else "Inactive"
+                verified_time_display = (
+                    f"{verified_time} seconds" if verified_time else "Not set"
+                )
+                tut_video_display = (
+                    f"[Tutorial Video]({tut_video})" if tut_video else "Not set"
+                )
 
-            response_text = (
-                f"**Shortener Details**\n"
-                f"**Site**: {site}\n"
-                f"**API Token**: {api_token}\n"
-                f"**Status**: {status}"
+                response_text = (
+                    f"**Shortener Details**\n"
+                    f"**Site**: {site}\n"
+                    f"**API Token**: {api_token}\n"
+                    f"**Status**: {status}\n\n"
+                    f"**Verified Time**: {verified_time_display}\n"
+                    f"**Tutorial Video**: {tut_video_display}"
+                )
+            else:
+                response_text = (
+                    "No shortener details found. Please set up your shortener settings."
+                )
+
+            # Update the message with the fetched shortener details
+            await query.message.edit_text(
+                text=response_text,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('Back', callback_data='set_shortener')]
+                ]),
+                disable_web_page_preview=True  # Disable preview for tutorial video link
             )
-        else:
-            response_text = "No shortener details found. Please set up your shortener settings."
-
-    # Update the message with the fetched shortener details
-        await query.message.edit_text(
-            text=response_text,
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton('Back', callback_data='set_shortener')]
-            ])
-        )
 
 
     elif data == "chng_shortener":  # Toggle shortener status
