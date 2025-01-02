@@ -30,6 +30,7 @@ logging.basicConfig(level=logging.INFO)
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
+    VERIFY_EXPIRE = db.get_verified_time
     logging.info(f"Received /start command from user ID: {id}")
 
     if not await db.present_user(id):
