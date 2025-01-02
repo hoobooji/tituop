@@ -619,16 +619,14 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     
         except Exception as e:
             print(f"! Error Occurred on callback data = 'chng_req' : {e}")
+   
 
+# Handle shortener settings
+elif data == "shortener_settings":
+    await query.answer("💫 Fetching Shortener details....")
 
-
-
-#Handle shortener setting
-    elif data == "shortener_settings":
-        await query.answer("💫 Fetching Shortener details....")
-    
-
-    # Fetch shortener details from the database
+    try:
+        # Fetch shortener details from the database
         shortener_data = await db.get_shortener()  # Fetch shortener details using the method
 
         if shortener_data:
@@ -637,68 +635,90 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             status = "Active" if shortener_data.get('active', False) else "Inactive"
 
             response_text = (
-        f"**Shortener Details**\n"
-        f"**Site**: {site}\n"
-        f"**API Token**: {api_token}\n"
-        f"**Status**: {status}"
+                f"**Shortener Details**\n"
+                f"**Site**: {site}\n"
+                f"**API Token**: {api_token}\n"
+                f"**Status**: {status}"
             )
         else:
             response_text = "No shortener details found. Please set up your shortener settings."
 
-    # Update the message with the fetched shortener details
+        # Update the message with the fetched shortener details
         await query.message.edit_text(
             text=response_text,
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton('Back',callback_data='set_shortener')]
+                [InlineKeyboardButton('Back', callback_data='set_shortener')]
             ])
-                )
-
+        )
+    except Exception as e:
+        # Log the error and notify the user
+        print(f"! Error occurred while fetching shortener details: {e}")
+        await query.message.edit_text(
+            text="❌ An error occurred while fetching shortener details. Please try again later.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('Back', callback_data='set_shortener')]
+            ])
+        )
 
 
         elif data == "chng_shortener":  # Toggle shortener status
-            user_id = callback_query.from_user.id
-            shortener_details = await db.get_shortener()
+    try:
+        user_id = query.from_user.id
+        shortener_details = await db.get_shortener()
 
-    # Toggle the shortener status in the database
-            if shortener_details:
-        # Disable shortener
-                await db.set_shortener("", "")
-                await callback_query.answer("Shortener Disabled ❌", show_alert=True)
-            else:
-        # Enable shortener, prompt for URL and API Key
-                await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
-                await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
+        # Toggle the shortener status in the database
+        if shortener_details:
+            # Disable shortener
+            await db.set_shortener("", "")
+            await query.answer("Shortener Disabled ❌", show_alert=True)
+        else:
+            # Enable shortener, prompt for URL and API Key
+            await query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
+            await query.message.reply(
+                "Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`"
+            )
 
+    except Exception as e:
+        # Log the error and notify the user
+        print(f"! Error occurred while toggling shortener status: {e}")
+        await query.answer("❌ An error occurred. Please try again later.", show_alert=True)
 
-        elif data == 'set_shortener_details':
-            if ' ' in message.text:
-                shortener_url, api_key = message.text.split(' ', 1)
-                try:
-            # Save the shortener URL and API Key to the database
-                    await db.set_shortener(shortener_url, api_key)
-                    await message.reply(
+        
+
+elif data == 'set_shortener_details':
+    try:
+        if ' ' in message.text:
+            # Split the input into Shortener URL and API Key
+            shortener_url, api_key = message.text.split(' ', 1)
+
+            # Save the Shortener URL and API Key to the database
+            await db.set_shortener(shortener_url, api_key)
+
+            # Notify the user of success
+            await message.reply(
                 "Shortener has been successfully set!",
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')],
-                    [InlineKeyboardButton('Back', callback_data='set_shortener')]  # Add the 'Back' button here
+                    [InlineKeyboardButton('Back', callback_data='set_shortener')]
                 ])
-                    )
-                except Exception as e:
-                    await message.reply(
-                        f"Failed to set shortener details. Error: {e}",
-                        reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]  # 'Back' button to go back
-                        ])
-                    )
-            else:
-                await message.reply(
-                    "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton('Back', callback_data='set_shortener')]  # 'Back' button to go back
-                    ])
-                )
-
-
+            )
+        else:
+            # Notify the user of invalid input format
+            await message.reply(
+                "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('Back', callback_data='set_shortener')]
+                ])
+            )
+    except Exception as e:
+        # Handle any errors during the process
+        print(f"! Error occurred while setting shortener details: {e}")
+        await message.reply(
+            f"❌ Failed to set shortener details. Please try again later.\nError: {e}",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton('Back', callback_data='set_shortener_cmd')]
+            ])
+        )
 
 
         elif data == "set_shortener":
