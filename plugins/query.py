@@ -710,7 +710,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         # Enable shortener, prompt for URL and API Key
             await query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
             await query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
-            await set_shortener_details(query)
 
     
 
