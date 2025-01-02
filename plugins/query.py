@@ -832,6 +832,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         id = query.from_user.id
 
         if await authoUser(query, id, owner_only=True):
+            await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+        
             try:
             # Fetch the current tutorial video URL from the database
                 current_video_url = await db.get_tut_video()
@@ -853,17 +855,18 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 # Confirm the update to the user
                     await set_msg.reply(f"<b><i>Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📹 Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {video_url}</blockquote></b>")
                 else:
+                # If the URL is invalid, prompt the user to try again
                     markup = [[InlineKeyboardButton(
                         '◈ Sᴇᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL 📹', callback_data='set_tut_video')]]
                     return await set_msg.reply(
-                        "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ʟɪɴᴋ ᴛᴏ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+                        "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ʟɪɴᴋ ᴛᴏ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
 
             except Exception as e:
                 try:
+                # Handle any exceptions that occur during the process
                     await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
-                    print(
-                        f"! Error Occurred on callback data = 'set_tut_video' : {e}")
+                    print(f"! Error Occurred on callback data = 'set_tut_video' : {e}")
                 except BaseException:
+                # If an error occurs while sending the error message, send a timeout message
                     await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
-                    print(
-                        f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
+                    print(f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
