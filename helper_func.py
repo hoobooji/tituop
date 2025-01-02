@@ -16,7 +16,6 @@ from database.database import *
 from config import OWNER_ID
 import random
 import string
-from config import VERIFY_EXPIRE
 from datetime import datetime, timedelta
 from database.database import db  # Ensure this is the correct import for your database instance
 #=============================================================================================================================================================================
