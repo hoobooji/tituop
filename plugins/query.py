@@ -1,4 +1,5 @@
 import random
+import asyncio
 from bot import Bot
 from pyrogram import __version__
 from plugins.FORMATS import *
@@ -6,6 +7,7 @@ from config import *
 from pyrogram.enums import ChatAction
 from plugins.autoDelete import convert_time
 from database.database import db
+from datetime import timedelta
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 # File setting function for retriveing modes and state of file related setting
@@ -710,40 +712,69 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
 
 
-    elif data == 'set_shortener_details':
-        if ' ' in message.text:
-            shortener_url, api_key = message.text.split(' ', 1)
-            try:
-            # Save the shortener URL and API Key to the database
-                await db.set_shortener(shortener_url, api_key)
-                await message.reply(
-                    "Shortener has been successfully set!",
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(
-                            '◈ Disable Shortener ❌', callback_data='chng_shortener')],
-                    # Add the 'Back' button here
-                        [InlineKeyboardButton(
-                            'Back', callback_data='set_shortener')]
-                    ])
-                )
-            except Exception as e:
-                await message.reply(
-                    f"Failed to set shortener details. Error: {e}",
-                    reply_markup=InlineKeyboardMarkup([
-                    # 'Back' button to go back
-                        [InlineKeyboardButton(
-                            'Back', callback_data='set_shortener_cmd')]
-                    ])
-                )
-        else:
-            await message.reply(
-                "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
+    
+
+
+elif data == 'set_shortener_details':
+    if await authoUser(query, query.from_user.id, owner_only=True):
+        try:
+            # Step 1: Prompt for the shortener URL with a timeout of 1 minute
+            await query.answer("Please send the shortener URL within 1 minute...")
+            set_msg_url = await query.message.reply(
+                "⏳ Please provide the Shortener site URL (e.g., https://example.com) within 1 minute.",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='cancel')]])
+            )
+            site_msg = await query.client.ask(
+                chat_id=query.from_user.id,
+                text="⏳ Enter Shortener site URL:",
+                timeout=60
+            )
+
+            shortener_url = site_msg.text.strip()
+
+            # Step 2: Validate if the URL is correct
+            if not shortener_url.startswith("http") or "://" not in shortener_url:
+                await site_msg.reply("⚠️ Please provide a valid URL.")
+                return
+
+            # Confirm the shortener site URL
+            await site_msg.reply(f"Shortener site URL set to: {shortener_url}\nNow please send the API key.")
+
+            # Step 3: Prompt for API key
+            set_msg_api = await query.message.reply(
+                "⏳ Please provide the API key for the shortener within 1 minute.",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='cancel')]])
+            )
+
+            api_msg = await query.client.ask(
+                chat_id=query.from_user.id,
+                text="⏳ Enter API key for the shortener:",
+                timeout=60
+            )
+
+            api_key = api_msg.text.strip()
+
+            # Step 4: Save the shortener details in the database
+            await db.set_shortener(shortener_url, api_key)
+            
+            # Confirmation message
+            await api_msg.reply(
+                "✅ Shortener details have been successfully set!",
                 reply_markup=InlineKeyboardMarkup([
-                # 'Back' button to go back
+                    [InlineKeyboardButton('◈ Disable Shortener ❌', callback_data='chng_shortener')],
                     [InlineKeyboardButton('Back', callback_data='set_shortener')]
                 ])
             )
-
+        except asyncio.TimeoutError:
+            await query.message.reply(
+                "⚠️ You did not provide the details in time. Please try again.",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
+            )
+        except Exception as e:
+            await query.message.reply(
+                f"⚠️ Error occurred: {e}",
+                reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
+            )
 
     elif data == "set_shortener":
         if await authoUser(query, query.from_user.id, owner_only=True):
@@ -762,8 +793,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     mode = 'Enable Shortener ✅'
 
         # Refresh the settings and update the message with new content
-                await message.edit_photo(
-                    photo=shortener_cmd_pic,
+                await message.reply_photo(
+                    photo=START_PIC,
                     caption=SET_SHORTENER_CMD_TXT.format(
                         shortener_status=shortener_status),
                     reply_markup=InlineKeyboardMarkup([
