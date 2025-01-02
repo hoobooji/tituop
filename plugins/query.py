@@ -14,10 +14,10 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO,  # Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
-
 
 async def fileSettings(getfunc, setfunc=None, delfunc=False):
     btn_mode, txt_mode, pic_mode = '❌', off_txt, off_pic
@@ -788,10 +788,11 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
                 )
             except Exception as e:
+                logging.error(f"Error setting shortener details: {e}")  # This now works correctly
                 await query.message.reply(
                     f"⚠️ Error occurred: {e}",
-                    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
-                )
+    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
+    )
 
     elif data == "set_shortener":
         if await authoUser(query, query.from_user.id, owner_only=True):
