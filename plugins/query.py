@@ -661,209 +661,209 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
         except Exception as e:
             print(f"! Error Occurred on callback data = 'chng_req' : {e}")
+    
 
-
-# Handle shortener settings
-elif data.startswith"shortener_settings":
-    await query.answer("💫 Fetching Shortener details....")
+    # Handle shortener settings
+    elif data == "shortener_settings":
+        await query.answer("💫 Fetching Shortener details....")
 
     # Fetch shortener details from the database
     # Fetch shortener details using the method
-    shortener_data = await db.get_shortener()
+        shortener_data = await db.get_shortener()
 
-    if shortener_data:
-        site = shortener_data.get('shortener_url', 'Not set')
-        api_token = shortener_data.get('api_key', 'Not set')
-        status = "Active" if shortener_data.get(
-            'active', False) else "Inactive"
+        if shortener_data:
+            site = shortener_data.get('shortener_url', 'Not set')
+            api_token = shortener_data.get('api_key', 'Not set')
+            status = "Active" if shortener_data.get(
+                'active', False) else "Inactive"
 
-        response_text = (
-            f"**Shortener Details**\n"
-            f"**Site**: {site}\n"
-            f"**API Token**: {api_token}\n"
-            f"**Status**: {status}"
-        )
-    else:
-        response_text = "No shortener details found. Please set up your shortener settings."
+            response_text = (
+                f"**Shortener Details**\n"
+                f"**Site**: {site}\n"
+                f"**API Token**: {api_token}\n"
+                f"**Status**: {status}"
+            )
+        else:
+            response_text = "No shortener details found. Please set up your shortener settings."
 
     # Update the message with the fetched shortener details
-    await query.message.edit_text(
-        text=response_text,
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton('Back', callback_data='set_shortener')]
-        ])
-    )
-
-
-elif data.startswith"chng_shortener":  # Toggle shortener status
-    user_id = callback_query.from_user.id
-    shortener_details = await db.get_shortener()
-
-    # Toggle the shortener status in the database
-    if shortener_details:
-        # Disable shortener
-        await db.set_shortener("", "")
-        await callback_query.answer("Shortener Disabled ❌", show_alert=True)
-    else:
-        # Enable shortener, prompt for URL and API Key
-        await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
-        await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
-
-
-if data == 'set_shortener_details':
-    if ' ' in message.text:
-        shortener_url, api_key = message.text.split(' ', 1)
-        try:
-            # Save the shortener URL and API Key to the database
-            await db.set_shortener(shortener_url, api_key)
-            await message.reply(
-                "Shortener has been successfully set!",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton(
-                        '◈ Disable Shortener ❌', callback_data='chng_shortener')],
-                    # Add the 'Back' button here
-                    [InlineKeyboardButton(
-                        'Back', callback_data='set_shortener')]
-                ])
-            )
-        except Exception as e:
-            await message.reply(
-                f"Failed to set shortener details. Error: {e}",
-                reply_markup=InlineKeyboardMarkup([
-                    # 'Back' button to go back
-                    [InlineKeyboardButton(
-                        'Back', callback_data='set_shortener_cmd')]
-                ])
-            )
-    else:
-        await message.reply(
-            "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
+        await query.message.edit_text(
+            text=response_text,
             reply_markup=InlineKeyboardMarkup([
-                # 'Back' button to go back
                 [InlineKeyboardButton('Back', callback_data='set_shortener')]
             ])
         )
 
 
-elif data.startswith"set_shortener":
-    try:
-        # Simulate the command being run again by calling the same function
-        message = query.message  # Access the message where the button was pressed
-
-        # Now, run the same logic as in the set_shortener command
+    elif data == "chng_shortener":  # Toggle shortener status
+        user_id = query.from_user.id
         shortener_details = await db.get_shortener()
 
+    # Toggle the shortener status in the database
         if shortener_details:
-            shortener_status = "Enabled ✅"
-            mode = 'Disable Shortener ❌'
+        # Disable shortener
+            await db.set_shortener("", "")
+            await callback_query.answer("Shortener Disabled ❌", show_alert=True)
         else:
-            shortener_status = "Disabled ❌"
-            mode = 'Enable Shortener ✅'
+        # Enable shortener, prompt for URL and API Key
+            await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
+            await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
+
+
+    elif data == 'set_shortener_details':
+        if ' ' in message.text:
+            shortener_url, api_key = message.text.split(' ', 1)
+            try:
+            # Save the shortener URL and API Key to the database
+                await db.set_shortener(shortener_url, api_key)
+                await message.reply(
+                    "Shortener has been successfully set!",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton(
+                            '◈ Disable Shortener ❌', callback_data='chng_shortener')],
+                    # Add the 'Back' button here
+                        [InlineKeyboardButton(
+                            'Back', callback_data='set_shortener')]
+                    ])
+                )
+            except Exception as e:
+                await message.reply(
+                    f"Failed to set shortener details. Error: {e}",
+                    reply_markup=InlineKeyboardMarkup([
+                    # 'Back' button to go back
+                        [InlineKeyboardButton(
+                            'Back', callback_data='set_shortener_cmd')]
+                    ])
+                )
+        else:
+            await message.reply(
+                "Please provide both Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`",
+                reply_markup=InlineKeyboardMarkup([
+                # 'Back' button to go back
+                    [InlineKeyboardButton('Back', callback_data='set_shortener')]
+                ])
+            )
+
+
+    elif data == "set_shortener":
+        try:
+        # Simulate the command being run again by calling the same function
+            message = query.message  # Access the message where the button was pressed
+
+        # Now, run the same logic as in the set_shortener command
+            shortener_details = await db.get_shortener()
+
+            if shortener_details:
+                shortener_status = "Enabled ✅"
+                mode = 'Disable Shortener ❌'
+            else:
+                shortener_status = "Disabled ❌"
+                mode = 'Enable Shortener ✅'
 
         # Refresh the settings and update the message with new content
-        await message.edit_photo(
-            photo=shortener_cmd_pic,
-            caption=SET_SHORTENER_CMD_TXT.format(
-                shortener_status=shortener_status),
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton(
-                    '◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
-                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton(
-                    '🔄 Refresh', callback_data='set_shortener')],
-                [InlineKeyboardButton('Close ✖️', callback_data='close')]
-            ])
-        )
-    except Exception as e:
-        await query.message.edit_text(
-            f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Close ✖️", callback_data="close")]])
-        )
+            await message.edit_photo(
+                photo=shortener_cmd_pic,
+                caption=SET_SHORTENER_CMD_TXT.format(
+                    shortener_status=shortener_status),
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton(
+                        '◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
+                    [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton(
+                        '🔄 Refresh', callback_data='set_shortener')],
+                    [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                ])
+            )
+        except Exception as e:
+            await query.message.edit_text(
+                f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+            )
 
 
 # Callback Query handler for "Set Verified Time" button
 
-elif data.startswith"set_verified_time":
-    id = query.from_user.id
+    elif data == "set_verified_time":
+        id = query.from_user.id
 
-    if await authoUser(query, id, owner_only=True):
-        try:
+        if await authoUser(query, id, owner_only=True):
+            try:
             # Fetch the current verified time from the database
-            verified_time_seconds = await db.get_verified_time()
-            current_verified_time = convert_time(verified_time_seconds)
+                verified_time_seconds = await db.get_verified_time()
+                current_verified_time = convert_time(verified_time_seconds)
 
             # Prompt the user to set the new verified time (in seconds)
-            set_msg = await client.ask(
-                chat_id=id,
-                text=f'<b><blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {current_verified_time}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs ᴡɪᴛʜɪɴ 1 ᴍɪɴᴜᴛᴇ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></b></blockquote>',
-                timeout=60
-            )
+                set_msg = await client.ask(
+                    chat_id=id,
+                    text=f'<b><blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {current_verified_time}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs ᴡɪᴛʜɪɴ 1 ᴍɪɴᴜᴛᴇ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></b></blockquote>',
+                    timeout=60
+                )
 
-            del_timer = set_msg.text.split()
+                del_timer = set_msg.text.split()
 
-            if len(del_timer) == 1 and del_timer[0].isdigit():
+                if len(del_timer) == 1 and del_timer[0].isdigit():
                 # Convert user input into integer
-                verified_time = int(del_timer[0])
+                    verified_time = int(del_timer[0])
 
                 # Save the new verified time to the database
-                await db.set_verified_time(verified_time)
+                    await db.set_verified_time(verified_time)
 
                 # Convert to human-readable format and notify the user
-                converted_time = convert_time(verified_time)
-                await set_msg.reply(f"<b><i>Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {converted_time}</blockquote></b>")
-            else:
-                markup = [[InlineKeyboardButton(
-                    '◈ Sᴇᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ ⏱', callback_data='set_verified_time')]]
-                return await set_msg.reply(
-                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+                    converted_time = convert_time(verified_time)
+                    await set_msg.reply(f"<b><i>Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {converted_time}</blockquote></b>")
+                else:
+                    markup = [[InlineKeyboardButton(
+                        '◈ Sᴇᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ ⏱', callback_data='set_verified_time')]]
+                    return await set_msg.reply(
+                        "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
 
-        except Exception as e:
+            except Exception as e:
+                try:
+                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                    print(
+                        f"! Error Occurred on callback data = 'set_verified_time' : {e}")
+                except BaseException:
+                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                    print(
+                        f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
+
+
+    elif data == "set_tut_video":
+        id = query.from_user.id
+
+        if await authoUser(query, id, owner_only=True):
             try:
-                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
-                print(
-                    f"! Error Occurred on callback data = 'set_verified_time' : {e}")
-            except BaseException:
-                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
-                print(
-                    f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
-
-
-elif data.startswith"set_tut_video":
-    id = query.from_user.id
-
-    if await authoUser(query, id, owner_only=True):
-        try:
             # Fetch the current tutorial video URL from the database
-            current_video_url = await db.get_tut_video()
+                current_video_url = await db.get_tut_video()
 
             # Prompt the user to input the new tutorial video URL
-            set_msg = await client.ask(
-                chat_id=id,
-                text=f'<b><blockquote>⏳ Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {current_video_url if current_video_url else "Not Set"}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ URL.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></b></blockquote>',
-                timeout=60
-            )
+                set_msg = await client.ask(
+                    chat_id=id,
+                    text=f'<b><blockquote>⏳ Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {current_video_url if current_video_url else "Not Set"}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ URL.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></b></blockquote>',
+                    timeout=60
+                )
 
             # Validate the user input for a valid URL
-            video_url = set_msg.text.strip()
+                video_url = set_msg.text.strip()
 
-            if video_url.startswith("http") and "://" in video_url:
+                if video_url.startswith("http") and "://" in video_url:
                 # Save the new tutorial video URL to the database
-                await db.set_tut_video(video_url)
+                    await db.set_tut_video(video_url)
 
                 # Confirm the update to the user
-                await set_msg.reply(f"<b><i>Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📹 Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {video_url}</blockquote></b>")
-            else:
-                markup = [[InlineKeyboardButton(
-                    '◈ Sᴇᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL 📹', callback_data='set_tut_video')]]
-                return await set_msg.reply(
-                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ʟɪɴᴋ ᴛᴏ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+                    await set_msg.reply(f"<b><i>Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📹 Cᴜʀʀᴇɴᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL: {video_url}</blockquote></b>")
+                else:
+                    markup = [[InlineKeyboardButton(
+                        '◈ Sᴇᴛ Tᴜᴛᴏʀɪᴀʟ Vɪᴅᴇᴏ URL 📹', callback_data='set_tut_video')]]
+                    return await set_msg.reply(
+                        "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ʟɪɴᴋ ᴛᴏ ᴀ ᴠᴀʟɪᴅ ᴠɪᴅᴇᴏ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>https://youtube.com/some_video</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
 
-        except Exception as e:
-            try:
-                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
-                print(
-                    f"! Error Occurred on callback data = 'set_tut_video' : {e}")
-            except BaseException:
-                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
-                print(
-                    f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
+            except Exception as e:
+                try:
+                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                    print(
+                        f"! Error Occurred on callback data = 'set_tut_video' : {e}")
+                except BaseException:
+                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                    print(
+                        f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
