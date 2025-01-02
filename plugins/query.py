@@ -811,52 +811,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 )
 
 
-# Callback Query handler for "Set Verified Time" button
 
-    elif data == "set_verified_time":
-        id = query.from_user.id
-
-        if await authoUser(query, id, owner_only=True):
-            try:
-            # Fetch the current verified time from the database
-                verified_time_seconds = await db.get_verified_time()
-                current_verified_time = convert_time(verified_time_seconds)
-
-            # Prompt the user to set the new verified time (in seconds)
-                set_msg = await client.ask(
-                    chat_id=id,
-                    text=f'<b><blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {current_verified_time}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs ᴡɪᴛʜɪɴ 1 ᴍɪɴᴜᴛᴇ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></b></blockquote>',
-                    timeout=60
-                )
-
-            # Make sure the user replied within the timeout and the response is valid
-                if set_msg.text and set_msg.text.isdigit():
-                # Convert user input into integer
-                    verified_time = int(set_msg.text)
-
-                # Save the new verified time to the database
-                    await db.set_verified_time(verified_time)
-
-                # Convert to human-readable format and notify the user
-                    converted_time = convert_time(verified_time)
-                    await set_msg.reply(f"<b><i>Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>⏱ Cᴜʀʀᴇɴᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ: {converted_time}</blockquote></b>")
-                else:
-                    markup = [[InlineKeyboardButton(
-                        '◈ Sᴇᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ ⏱', callback_data='set_verified_time')]]
-                    await set_msg.reply(
-                        "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
-
-            except asyncio.TimeoutError:
-                await set_msg.reply("<b><i>Timeout reached! You took too long to reply.</i></b>", disable_notification=True)
-                print("Timeout occurred while waiting for verified time input.")
-        
-            except Exception as e:
-                try:
-                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
-                    print(f"! Error Occurred on callback data = 'set_verified_time' : {e}")
-                except BaseException:
-                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄʀᴄᴜʀʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
-                    print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
 
     elif data == "set_tut_video":
         id = query.from_user.id
@@ -900,3 +855,33 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 # If an error occurs while sending the error message, send a timeout message
                     await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
                     print(f"! Error Occurred on callback data = 'set_tut_video' -> Reason: 1 minute Time out ..")
+
+
+    elif data == 'set_verify_time':
+        id = query.from_user.id
+        if await authoUser(query, id, owner_only=True):
+            try:
+
+                time = convert_time(await db.get_verified_time())
+                set_msg = await client.ask(chat_id=id, text=f'<b><blockquote>⏱ Cᴜʀʀᴇɴᴛ Tɪᴍᴇʀ: {timer}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ ᴛɪᴍᴇʀ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs ᴡɪᴛʜɪɴ 1 ᴍɪɴᴜᴛᴇ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></b></blockquote>', timeout=60)
+                verify_time = set_msg.text.split()
+
+                if len(verify_time) == 1 and verify_time[0].isdigit():
+                    VERIFY_EXPIRE = int(verify_time[0])
+                    await db.set_verified_time(VERIFY_EXPIRE)
+                    time = convert_time(VERIFY_EXPIRE)
+                    await set_msg.reply(f"<b><i>Aᴅᴅᴇᴅ Sᴜᴄcᴇssғᴜʟʟʏ ✅</i>\n<blockquote>⏱ Cᴜʀʀᴇɴᴛ Tɪᴍᴇʀ: {timer}</blockquote></b>")
+                else:
+                    markup = [[InlineKeyboardButton(
+                        '◈ Sᴇᴛ Verify Tɪᴍᴇʀ ⏱', callback_data='set_verify_time')]]
+                    return await set_msg.reply("<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+
+            except Exception as e:
+                try:
+                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                    print(
+                        f"! Error Occurred on callback data = 'set_verify_time' : {e}")
+                except BaseException:
+                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                    print(
+                        f"! Error Occurred on callback data = 'set_verify_time' -> Rᴇᴀsᴏɴ: 1 minute Time out ..")
