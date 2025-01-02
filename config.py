@@ -33,7 +33,7 @@ JOIN_REQS_DB = os.environ.get("JOIN_REQS_DB", DB_URI)
 
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "inshorturl.com")
 SHORTLINK_API = os.environ.get("SHORTLINK_API", "c6afac58d50114bfb3e1c6aad64f90e0591bf77e")
-VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', "36000")) # Add time in seconds
+
 IS_VERIFY = os.environ.get("IS_VERIFY", "True")
 TUT_VID = os.environ.get("TUT_VID", "https://t.me/delight_link/2")
 
