@@ -723,7 +723,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     "⏳ Please provide the Shortener site URL (e.g., https://example.com) within 1 minute.",
                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
                 )
-                site_msg = await query.client.ask(
+                site_msg = await Bot.ask(
                     chat_id=query.from_user.id,
                     text="⏳ Enter Shortener site URL:",
                     timeout=60
@@ -745,7 +745,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='set_shortener')]])
                 )
 
-                api_msg = await query.client.ask(
+                api_msg = await Bot.ask(
                     chat_id=query.from_user.id,
                     text="⏳ Enter API key for the shortener:",
                     timeout=60
