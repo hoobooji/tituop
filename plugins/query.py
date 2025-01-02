@@ -11,7 +11,12 @@ from database.database import db
 from datetime import timedelta
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
-# File setting function for retriveing modes and state of file related setting
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 async def fileSettings(getfunc, setfunc=None, delfunc=False):
@@ -810,12 +815,11 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     caption=SET_SHORTENER_CMD_TXT.format(
                         shortener_status=shortener_status),
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(mode, callback_data='chng_shortener')],
-                        [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton(
-                            '🔄 Refresh', callback_data='set_shortener')],
-                        [InlineKeyboardButton('Close ✖️', callback_data='close')]
-                    ])
-                )
+                [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
+                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
+                [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
+                [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                ])
             except Exception as e:
                 await query.message.edit_text(
                     f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
