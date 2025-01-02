@@ -819,7 +819,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
                 [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
-                ])
+                ]))
             except Exception as e:
                 await query.message.edit_text(
                     f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
