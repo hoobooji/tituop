@@ -767,8 +767,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     caption=SET_SHORTENER_CMD_TXT.format(
                         shortener_status=shortener_status),
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(mode, callback_data='chng_shortener'), InlineKeyboardButton(
-                            '◈ Set Shortener URL & API Key', callback_data='set_shortener_details')],
+                        [InlineKeyboardButton(mode, callback_data='chng_shortener')],
                         [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton(
                             '🔄 Refresh', callback_data='set_shortener')],
                         [InlineKeyboardButton('Close ✖️', callback_data='close')]
