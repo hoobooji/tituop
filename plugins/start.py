@@ -193,7 +193,7 @@ async def start_command(client: Client, message: Message):
                     else:
                 # If no shortener is configured, proceed as verified
                         await db.update_verify_status(id, is_verified=True, verified_time=time.time())
-                        return
+                       
             try:
                 base64_string = text.split(" ", 1)[1]
             except:
