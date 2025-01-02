@@ -799,11 +799,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     timeout=60
                 )
 
-                del_timer = set_msg.text.split()
-
-                if len(del_timer) == 1 and del_timer[0].isdigit():
+            # Make sure the user replied within the timeout and the response is valid
+                if set_msg.text and set_msg.text.isdigit():
                 # Convert user input into integer
-                    verified_time = int(del_timer[0])
+                    verified_time = int(set_msg.text)
 
                 # Save the new verified time to the database
                     await db.set_verified_time(verified_time)
@@ -814,19 +813,20 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 else:
                     markup = [[InlineKeyboardButton(
                         '◈ Sᴇᴛ Vᴇʀɪғɪᴇᴅ Tɪᴍᴇ ⏱', callback_data='set_verified_time')]]
-                    return await set_msg.reply(
+                    await set_msg.reply(
                         "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ ɪɴ sᴇᴄᴏɴᴅs.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>300</code>, <code>600</code>, <code>900</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
 
+            except asyncio.TimeoutError:
+                await set_msg.reply("<b><i>Timeout reached! You took too long to reply.</i></b>", disable_notification=True)
+                print("Timeout occurred while waiting for verified time input.")
+        
             except Exception as e:
                 try:
-                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
-                    print(
-                        f"! Error Occurred on callback data = 'set_verified_time' : {e}")
+                    await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                    print(f"! Error Occurred on callback data = 'set_verified_time' : {e}")
                 except BaseException:
-                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
-                    print(
-                        f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
-
+                    await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄʀᴄᴜʀʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                    print(f"! Error Occurred on callback data = 'set_verified_time' -> Reason: 1 minute Time out ..")
 
     elif data == "set_tut_video":
         id = query.from_user.id
