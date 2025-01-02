@@ -172,15 +172,15 @@ async def get_shortlink(user_id, link):
     """
     Fetch the shortener settings for the user from the database and generate a short link.
     """
-    # Fetch the shortener settings for the user from the database
-    shortener_data = await self.shortener_data.fetch_shortener(user_id)
+    # Fetch shortener details from the database for the user
+    shortener_data = await db.get_shortener()
 
     if not shortener_data:
         return "Shortener settings are not set up for this user."
 
     # Get the API key and base URL from the database
-    api = shortener_data.get('api')
-    url = shortener_data.get('site')
+    api = shortener_data.get('api_key')
+    url = shortener_data.get('shortener_url')
 
     if not api or not url:
         return "API key or URL is missing in shortener settings."
@@ -193,6 +193,8 @@ async def get_shortlink(user_id, link):
     short_link = await shortzy.convert(link)
 
     return short_link
+
+
 def get_exp_time(seconds):
     periods = [('days', 86400), ('hours', 3600), ('mins', 60), ('secs', 1)]
     result = ''
