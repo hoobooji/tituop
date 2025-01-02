@@ -487,7 +487,7 @@ async def set_shortener(client, message):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
                 [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
-                [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verified_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
+                [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
             ]),
             message_effect_id=5107584321108051014  #👍
