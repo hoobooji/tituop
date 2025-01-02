@@ -665,6 +665,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     # Handle shortener settings
     elif data == "shortener_settings":
+        if await authoUser(query, query.from_user.id, owner_only=True):
         await query.answer("💫 Fetching Shortener details....")
 
     # Fetch shortener details from the database
@@ -703,11 +704,11 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         if shortener_details:
         # Disable shortener
             await db.set_shortener("", "")
-            await callback_query.answer("Shortener Disabled ❌", show_alert=True)
+            await query.answer("Shortener Disabled ❌", show_alert=True)
         else:
         # Enable shortener, prompt for URL and API Key
-            await callback_query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
-            await callback_query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
+            await query.answer("Shortener Enabled ✅. Please provide the Shortener URL and API Key.", show_alert=True)
+            await query.message.reply("Send the Shortener URL and API Key in the format:\n`<shortener_url> <api_key>`")
 
 
     elif data == 'set_shortener_details':
@@ -746,6 +747,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
     elif data == "set_shortener":
+        if await authoUser(query, query.from_user.id, owner_only=True):
         try:
         # Simulate the command being run again by calling the same function
             message = query.message  # Access the message where the button was pressed
