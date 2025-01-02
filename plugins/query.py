@@ -624,8 +624,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 #Handle shortener setting
-         elif data == "shortener_settings":
-             await query.answer("💫 Fetching Shortener details....")
+    elif data == "shortener_settings":
+        await query.answer("💫 Fetching Shortener details....")
     
 
     # Fetch shortener details from the database
