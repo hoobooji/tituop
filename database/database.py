@@ -6,12 +6,12 @@ import pymongo, os
 import motor
 from config import DB_URI, DB_NAME
 from bot import Bot
-
+import logging
 
 dbclient = pymongo.MongoClient(DB_URI)
 database = dbclient[DB_NAME]
 
-
+logging.basicConfig(level=logging.INFO)
 
 collection = database['premium-users']
 
