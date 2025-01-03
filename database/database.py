@@ -63,37 +63,70 @@ class Rohit:
         self.store_reqLink_data = self.database['store_reqLink']
 
     # Shortener Token
-    async def set_shortener(self, url, api):
+    async def set_shortener_url(self, url):
         try:
-        # Ensure only one active shortener exists
+        # Check if an active shortener exists
             existing = await self.shortener_data.find_one({"active": True})
             if existing:
-            # Update existing active shortener
+            # Update the URL of the existing active shortener
                 await self.shortener_data.update_one(
                     {"_id": existing["_id"]},
-                {"$set": {"shortener_url": url, "api_key": api, "active": True, "updated_at": datetime.utcnow()}}
+                    {"$set": {"shortener_url": url, "updated_at": datetime.utcnow()}}
                 )
             else:
-            # Insert a new active shortener
+            # Insert a new active shortener with the given URL
                 await self.shortener_data.insert_one({
                     "shortener_url": url,
+                    "api_key": None,
+                    "active": True,
+                    "created_at": datetime.utcnow()
+                })
+            return True
+        except Exception as e:
+            logging.error(f"Error setting shortener URL: {e}")
+            return False
+
+    async def set_shortener_api(self, api):
+        try:
+        # Check if an active shortener exists
+            existing = await self.shortener_data.find_one({"active": True})
+            if existing:
+            # Update the API key of the existing active shortener
+                await self.shortener_data.update_one(
+                    {"_id": existing["_id"]},
+                    {"$set": {"api_key": api, "updated_at": datetime.utcnow()}}
+                )
+            else:
+            # Insert a new active shortener with the given API key
+                await self.shortener_data.insert_one({
+                    "shortener_url": None,
                     "api_key": api,
                     "active": True,
                     "created_at": datetime.utcnow()
                 })
             return True
         except Exception as e:
-            logging.error(f"Error setting shortener details: {e}")
+            logging.error(f"Error setting shortener API key: {e}")
             return False
 
-    async def get_shortener(self):
+    async def get_shortener_url(self):
         try:
-        # Retrieve the active shortener details
-            shortener = await self.shortener_data.find_one({"active": True}, {"_id": 0, "shortener_url": 1, "api_key": 1})
-            return shortener
+        # Retrieve the shortener URL of the active shortener
+            shortener = await self.shortener_data.find_one({"active": True}, {"_id": 0, "shortener_url": 1})
+            return shortener.get("shortener_url") if shortener else None
         except Exception as e:
-            logging.error(f"Error fetching shortener details: {e}")
+            logging.error(f"Error fetching shortener URL: {e}")
             return None
+
+    async def get_shortener_api(self):
+        try:
+        # Retrieve the API key of the active shortener
+            shortener = await self.shortener_data.find_one({"active": True}, {"_id": 0, "api_key": 1})
+            return shortener.get("api_key") if shortener else None
+        except Exception as e:
+            logging.error(f"Error fetching shortener API key: {e}")
+            return None
+
 
     async def deactivate_shortener(self):
         try:
