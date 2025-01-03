@@ -444,57 +444,55 @@ async def handle_reqFsub(client: Client, message: Message):
         await message.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote><b><i>Cᴏɴᴛᴀɴᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ: @rohit_1888</i></b>", reply_markup=reply_markup)
 
 
-@Bot.on_message(filters.command("set_token") & filters.private & is_admin)
-async def set_token(client, message: Message):
-    """
-    Command to set the shortener site and API key.
-    Usage: /set_token <site> <api_key>
-    """
-    try:
-        user_id = message.from_user.id
-        args = message.text.split(maxsplit=2)
-        if len(args) < 3:
-            await message.reply("Usage: /set_token <site> <api_key>")
-            return
-        
-        site, api_key = args[1], args[2]
-        await client.user_manager.update_shortener(user_id, site, api_key)
-        await message.reply(f"Token set successfully:\nSite: {site}\nAPI Key: {api_key}")
-    except Exception as e:
-        await message.reply(f"Error setting token: {e}")
-
-
-# Command to send shortener settings and additional options
 @Bot.on_message(filters.command('token') & filters.private & filters.user(OWNER_ID))
 async def set_shortener(client, message):
     await message.reply_chat_action(ChatAction.TYPING)
 
     try:
-        # Get current shortener settings from the database
-        shortener_details = await db.get_shortener()
+        # Fetch shortener URL and API key from the database
+        shortener_url = await db.get_shortener_url()  # Fetch the shortener URL
+        shortener_api = await db.get_shortener_api()  # Fetch the shortener API key
 
-        if shortener_details:
+        if shortener_url and shortener_api:
+            # If both URL and API key are available, the shortener is considered "Enabled ✅"
             shortener_status = "Enabled ✅"
             mode_button = InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')
         else:
+            # If either URL or API key is missing, the shortener is "Disabled ❌"
             shortener_status = "Disabled ❌"
             mode_button = InlineKeyboardButton('Enable Shortener ✅', callback_data='enable_shortener')
 
         # Send the settings message with the toggle button and other options
         await message.reply_photo(
             photo=START_PIC,
-            caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
+            caption=(
+                f"🔗 **Shortener Settings**\n\n"
+                f"**Shortener Status:** {shortener_status}\n\n"
+                f"Use the options below to configure the shortener."
+            ),
             reply_markup=InlineKeyboardMarkup([
                 [mode_button],
                 [InlineKeyboardButton('Set Site', callback_data='set_shortener_details')],
-                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
-                [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
+                [
+                    InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'),
+                    InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')
+                ],
+                [
+                    InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'),
+                    InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')
+                ],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
             ])
         )
     except Exception as e:
+        # Log the error for debugging purposes
+        logging.error(f"Error in set_shortener command: {e}")
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
         await message.reply(
-            f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>", 
+            (
+                f"❌ **Error Occurred:**\n\n"
+                f"**Reason:** {e}\n\n"
+                f"📩 Contact developer: [Rohit](https://t.me/rohit_1888)"
+            ),
             reply_markup=reply_markup
         )
