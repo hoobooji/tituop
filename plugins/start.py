@@ -142,35 +142,48 @@ async def start_command(client: Client, message: Message):
         # Handle content fetching with ads
         elif string.startswith("get"):
             if not is_premium and not verify_status['is_verified']:
-                shortener_details = await db.get_shortener()
-                if shortener_details:
-                    token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
-                    await db.update_verify_status(id, verify_token=token, link="")
+                try:
+                    shortener_url = await db.get_shortener_url()
+                    shortener_api = await db.get_shortener_api()
 
-                    # Use Shortzy for link shortening
-                    shortener_url = shortener_details["shortener_url"]
-                    api_key = shortener_details["api_key"]
-                    long_url = f"https://telegram.dog/{client.username}?start=verify_{token}"
-                    short_link = await get_shortlink(shortener_url, api_key, long_url)
+                    if shortener_url and shortener_api:
+                        token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+                        await db.update_verify_status(id, verify_token=token, link="")
 
-                    tut_vid_url = await db.get_tut_video() or TUT_VID
+                # Create the long URL
+                        long_url = f"https://telegram.dog/{client.username}?start=verify_{token}"
 
-                    btn = [
-                        [InlineKeyboardButton("Click here", url=short_link), InlineKeyboardButton('How to use the bot', url=tut_vid_url)],
-                        [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
-                    ]
-                    await message.reply(
-                        f"Your ads token is expired or invalid. Please verify to access the files.\n\n"
-                        f"Token Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\n"
-                        f"What is the token?\n\n"
-                        f"This is an ads token. By passing 1 ad, you can use the bot for 24 hours.",
-                        reply_markup=InlineKeyboardMarkup(btn),
-                        protect_content=False,
-                        quote=True
-                    )
-                    return
-                else:
-                    await db.update_verify_status(id, is_verified=True, verified_time=time.time())
+                # Get the short link using the helper function
+                        short_link = await get_shortlink(long_url)
+
+                        tut_vid_url = await db.get_tut_video() or TUT_VID
+
+                # Buttons for the message
+                        btn = [
+                            [InlineKeyboardButton("Click here", url=short_link),
+                     InlineKeyboardButton('How to use the bot', url=tut_vid_url)],
+                            [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
+                        ]
+
+                # Reply with verification message
+                        await message.reply(
+                            f"Your ads token is expired or invalid. Please verify to access the files.\n\n"
+                            f"Token Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\n"
+                            f"What is the token?\n\n"
+                            f"This is an ads token. By passing 1 ad, you can use the bot for 24 hours.",
+                            reply_markup=InlineKeyboardMarkup(btn),
+                            protect_content=False       
+                        )
+                    else:
+                # Proceed without a shortener by marking the user as verified
+                        await db.update_verify_status(id, is_verified=True, verified_time=time.time())
+                        await message.reply(
+                            "Shortener details are not configured. You've been verified without a token."
+                        )
+
+                except Exception as e:
+                    logging.error(f"Error in verification process: {e}")
+                    await message.reply("An unexpected error occurred. Please try again later.")
 
             argument = string.split("-")
             if len(argument) == 3:
