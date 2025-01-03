@@ -939,29 +939,35 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
 
-    elif data ==  "enable_shortener":
+    elif data == "enable_shortener":
         await query.answer()
-    
+
     # Check if shortener details are already set
         shortener_details = await db.get_shortener()
         if shortener_details:
         # Enable the existing shortener
             success = await db.set_shortener(shortener_details['shortener_url'], shortener_details['api_key'])
+        
+            if success:
+                await query.edit_message_caption(
+                    caption="Shortener has been enabled ✅",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')],
+                        [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                    ])
+                )
+            else:
+                await query.message.reply(
+                    "Failed to enable the shortener. Please try again."
+                )
         else:
-        # If no details exist, return an error or ask for new details
-            success = False
-
-        if success:
+            # If no shortener details are found, prompt the user to set them
             await query.edit_message_caption(
-                caption="Shortener has been enabled ✅",
+                caption="No shortener details found. Please set the shortener details first.",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')],
+                    [InlineKeyboardButton('Set Shortener Details', callback_data='set_shortener_details')],
                     [InlineKeyboardButton('Close ✖️', callback_data='close')]
                 ])
-            )
-        else:
-            await query.message.reply(
-                "Failed to enable the shortener. Please ensure shortener details are set first or try again."
             )
 
     elif data == "disable_shortener":
