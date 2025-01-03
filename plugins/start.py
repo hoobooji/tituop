@@ -30,7 +30,7 @@ logging.basicConfig(level=logging.INFO)
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
-    VERIFY_EXPIRE = db.get_verified_time
+    VERIFY_EXPIRE = await db.get_verified_time()  # Call the method asynchronously to get the value
     logging.info(f"Received /start command from user ID: {id}")
 
     if not await db.present_user(id):
@@ -42,7 +42,11 @@ async def start_command(client: Client, message: Message):
 
     text = message.text
     verify_status = await db.get_verify_status(id)
-    if verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
+    if (
+        verify_status['is_verified'] and
+        VERIFY_EXPIRE is not None and  # Ensure VERIFY_EXPIRE is not None
+        VERIFY_EXPIRE < (time.time() - verify_status['verified_time'])
+    ):
         await db.update_verify_status(id, is_verified=False)
 
     is_premium = await is_premium_user(id)
