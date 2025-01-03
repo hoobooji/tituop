@@ -88,8 +88,9 @@ class Rohit:
 
     async def get_shortener(self):
         try:
-            # Retrieve the active shortener details
-            return await self.shortener_data.find_one({"active": True})
+        # Retrieve the active shortener details
+            shortener = await self.shortener_data.find_one({"active": True}, {"_id": 0, "shortener_url": 1, "api_key": 1})
+            return shortener
         except Exception as e:
             logging.error(f"Error fetching shortener details: {e}")
             return None
