@@ -937,4 +937,46 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 )
                 print(f"! Error occurred on callback data = 'set_verify_time' : {e}")
 
+
+
+    elif data ==  "enable_shortener":
+        await query.answer()
+    
+    # Check if shortener details are already set
+        shortener_details = await db.get_shortener()
+        if shortener_details:
+        # Enable the existing shortener
+            success = await db.set_shortener(shortener_details['shortener_url'], shortener_details['api_key'])
+        else:
+        # If no details exist, return an error or ask for new details
+            success = False
+
+        if success:
+            await query.edit_message_caption(
+                caption="Shortener has been enabled ✅",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')],
+                    [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                ])
+            )
+        else:
+            await query.message.reply(
+                "Failed to enable the shortener. Please ensure shortener details are set first or try again."
+            )
+
+    elif data == "disable_shortener":
+        await query.answer()
+    
+    # Deactivate the shortener
+        success = await db.deactivate_shortener()
+        if success:
+            await query.edit_message_caption(
+                caption="Shortener has been disabled ❌",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton('Enable Shortener ✅', callback_data='enable_shortener')],
+                    [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                ])
+            )
+        else:
+            await query.message.reply("Failed to disable the shortener. Please try again.")
     
