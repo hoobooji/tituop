@@ -806,38 +806,43 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     elif data == "set_shortener":
         if await authoUser(query, query.from_user.id, owner_only=True):
             try:
-        # Simulate the command being run again by calling the same function
+            # Simulate the command being run again by accessing the message where the button was pressed
                 message = query.message  # Access the message where the button was pressed
 
-        # Now, run the same logic as in the set_shortener command
-                shortener_details = await db.get_shortener()
+            # Fetch the shortener URL and API from the database
+                shortener_url = await db.get_shortener_url()
+                shortener_api = await db.get_shortener_api()
 
-                if shortener_details:
+            # Check if both shortener URL and API are available
+                if shortener_url and shortener_api:
                     shortener_status = "Enabled ✅"
                     mode = 'Disable Shortener ❌'
                 else:
                     shortener_status = "Disabled ❌"
                     mode = 'Enable Shortener ✅'
 
-        # Refresh the settings and update the message with new content
+            # Refresh the settings and update the message with new content
                 await message.reply_photo(
                     photo=START_PIC,
                     caption=SET_SHORTENER_CMD_TXT.format(
                         shortener_status=shortener_status),
                     reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
-                [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
-                [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
-                [InlineKeyboardButton('Close ✖️', callback_data='close')]
-                ]))
+                        [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
+                        [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'),
+                     InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
+                        [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'),
+                     InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
+                        [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                    ])
+                )
             except Exception as e:
+            # If an error occurs, display an error message with a contact option
                 await query.message.edit_text(
                     f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
                     reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+                        [[InlineKeyboardButton("Close ✖️", callback_data="close")]]
+                    )
                 )
-
-
 
 
     elif data == "set_tut_video":
