@@ -486,6 +486,7 @@ async def set_shortener(client, message):
             caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
             reply_markup=InlineKeyboardMarkup([
                 [mode_button],
+                [InlineKeyboardButton('Set Site', callback_data='set_shortener_details')],
                 [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
                 [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
