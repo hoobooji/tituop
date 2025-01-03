@@ -167,31 +167,27 @@ async def update_verify_status(user_id, verify_token="", is_verified=False, veri
     await db.update_verify_status(user_id, verify_token, is_verified, verified_time, link)
 
 
-async def get_shortlink(user_id, link):
-    """
-    Fetch the shortener settings for the user from the database and generate a short link.
-    """
-    # Fetch shortener details from the database for the user
-    shortener_data = await db.get_shortener()
+async def get_shortlink(link):
+    # Fetch shortener details from the database
+    shortener_url = await db.get_shortener_url()
+    shortener_api = await db.get_shortener_api()
 
-    if not shortener_data:
-        return "Shortener settings are not set up for this user."
+    if not shortener_url or not shortener_api:
+        raise ValueError("Shortener URL or API key is not configured in the database.")
 
-    # Get the API key and base URL from the database
-    api = shortener_data.get('api_key')
-    url = shortener_data.get('shortener_url')
+    # Log the long URL for debugging
+    print(f"Original Link: {link}")
 
-    if not api or not url:
-        return "API key or URL is missing in shortener settings."
-
-    # Print the link for debugging
-    print(f"Link to be shortened: {link}")
-
-    # Use the Shortzy API to generate the short link
-    shortzy = Shortzy(api_key=api, base_site=url)
-    short_link = await shortzy.convert(link)
-
-    return short_link
+    try:
+        # Initialize Shortzy with details from the database
+        shortzy = Shortzy(api_key=shortener_api, base_site=shortener_url)
+        # Convert the long URL to a short URL
+        short_link = await shortzy.convert(link)
+        return short_link
+    except Exception as e:
+        # Log the error for debugging and raise it
+        logging.error(f"Error using Shortzy: {e}")
+        raise
 
 
 def get_exp_time(seconds):
