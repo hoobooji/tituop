@@ -460,7 +460,7 @@ async def set_shortener(client, message):
         else:
             # If either URL or API key is missing, the shortener is "Disabled ❌"
             shortener_status = "Disabled ❌"
-            mode_button = InlineKeyboardButton('Enable Shortener ✅', callback_data='enable_shortener')
+            mode_button = InlineKeyboardButton('Enable Shortener ✅', callback_data='set_shortener_details')
 
         # Send the settings message with the toggle button and other options
         await message.reply_photo(
