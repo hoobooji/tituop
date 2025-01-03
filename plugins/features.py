@@ -475,23 +475,25 @@ async def set_shortener(client, message):
 
         if shortener_details:
             shortener_status = "Enabled ✅"
-            mode = 'Disable Shortener ❌'
+            mode_button = InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')
         else:
             shortener_status = "Disabled ❌"
-            mode = 'Enable Shortener ✅'
+            mode_button = InlineKeyboardButton('Enable Shortener ✅', callback_data='enable_shortener')
 
-        # Send the initial settings with options to enable/disable shortener, set verified time, and tutorial video
+        # Send the settings message with the toggle button and other options
         await message.reply_photo(
             photo=START_PIC,
             caption=SET_SHORTENER_CMD_TXT.format(shortener_status=shortener_status),
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
+                [mode_button],
                 [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'), InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
                 [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'), InlineKeyboardButton('Set Tutorial Video 🎥', callback_data='set_tut_video')],
                 [InlineKeyboardButton('Close ✖️', callback_data='close')]
-            ]),
-            message_effect_id=5107584321108051014  #👍
+            ])
         )
     except Exception as e:
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
-        await message.reply(f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>", reply_markup=reply_markup)
+        await message.reply(
+            f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>", 
+            reply_markup=reply_markup
+        )
