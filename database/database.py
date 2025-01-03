@@ -65,16 +65,16 @@ class Rohit:
     # Shortener Token
     async def set_shortener(self, url, api):
         try:
-            # Ensure only one active shortener exists
+        # Ensure only one active shortener exists
             existing = await self.shortener_data.find_one({"active": True})
             if existing:
-                # Update existing active shortener
+            # Update existing active shortener
                 await self.shortener_data.update_one(
                     {"_id": existing["_id"]},
-                    {"$set": {"shortener_url": url, "api_key": api, "updated_at": datetime.utcnow()}}
+                {"$set": {"shortener_url": url, "api_key": api, "active": True, "updated_at": datetime.utcnow()}}
                 )
             else:
-                # Insert a new active shortener
+            # Insert a new active shortener
                 await self.shortener_data.insert_one({
                     "shortener_url": url,
                     "api_key": api,
