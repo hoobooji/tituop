@@ -174,17 +174,8 @@ async def start_command(client: Client, message: Message):
                             reply_markup=InlineKeyboardMarkup(btn),
                             protect_content=False       
                         )
-                    else:
-                # Proceed without a shortener by marking the user as verified
-                        await db.update_verify_status(id, is_verified=True, verified_time=time.time())
-                        await message.reply(
-                            "Shortener details are not configured. You've been verified without a token."
-                        )
-
-                except Exception as e:
-                    logging.error(f"Error in verification process: {e}")
-                    await message.reply("An unexpected error occurred. Please try again later.")
-                    return
+                    
+                        return
 
             argument = string.split("-")
             if len(argument) == 3:
