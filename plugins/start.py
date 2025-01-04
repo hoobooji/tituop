@@ -184,6 +184,7 @@ async def start_command(client: Client, message: Message):
                 except Exception as e:
                     logging.error(f"Error in verification process: {e}")
                     await message.reply("An unexpected error occurred. Please try again later.")
+                    return
 
             argument = string.split("-")
             if len(argument) == 3:
