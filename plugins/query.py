@@ -955,32 +955,41 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     elif data == "enable_shortener":
         await query.answer()
 
-    # Check if shortener details are already set
-        shortener_details = await db.get_shortener()
-        if shortener_details:
-        # Enable the existing shortener
-            success = await db.set_shortener(shortener_details['shortener_url'], shortener_details['api_key'])
-        
-            if success:
+        try:
+            # Check if shortener details are already set
+            shortener_url = await db.get_shortener_url()
+            shortener_api = await db.get_shortener_api()
+
+            if shortener_url and shortener_api:
+                # Enable the shortener
+                success_url = await db.set_shortener_url(shortener_url)
+                success_api = await db.set_shortener_api(shortener_api)
+
+                if success_url and success_api:
+                    await query.edit_message_caption(
+                        caption="Shortener has been enabled ✅",
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')],
+                            [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                        ])
+                    )
+                else:
+                    await query.message.reply(
+                        "Failed to enable the shortener. Please try again."
+                    )
+            else:
+                # If no shortener details are found, prompt the user to set them
                 await query.edit_message_caption(
-                    caption="Shortener has been enabled ✅",
+                    caption="No shortener details found. Please set the shortener details first.",
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')],
+                        [InlineKeyboardButton('Set Shortener Details', callback_data='set_shortener_details')],
                         [InlineKeyboardButton('Close ✖️', callback_data='close')]
                     ])
                 )
-            else:
-                await query.message.reply(
-                    "Failed to enable the shortener. Please try again."
-                )
-        else:
-            # If no shortener details are found, prompt the user to set them
-            await query.edit_message_caption(
-                caption="No shortener details found. Please set the shortener details first.",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('Set Shortener Details', callback_data='set_shortener_details')],
-                    [InlineKeyboardButton('Close ✖️', callback_data='close')]
-                ])
+        except Exception as e:
+            logging.error(f"Error enabling shortener: {e}")
+            await query.message.reply(
+                "An unexpected error occurred while enabling the shortener. Please try again later."
             )
 
     elif data == "disable_shortener":
