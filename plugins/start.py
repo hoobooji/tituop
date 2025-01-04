@@ -147,7 +147,7 @@ async def start_command(client: Client, message: Message):
                     shortener_api = await db.get_shortener_api()
 
                     if shortener_url and shortener_api:
-                        token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+                        token = ''.join(rohit.choices(rohit.ascii_letters + string.digits, k=10))
                         await db.update_verify_status(id, verify_token=token, link="")
 
                 # Create the long URL
