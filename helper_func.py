@@ -168,28 +168,23 @@ async def get_shortlink(link):
     shortener_url = await db.get_shortener_url()
     shortener_api = await db.get_shortener_api()
 
-    # Validate and fix shortener_url
+    # Validate shortener details
     if not shortener_url or not shortener_api:
         logging.error("Shortener URL or API key is missing.")
         raise ValueError("Shortener details are not configured.")
 
-    if not shortener_url.startswith(("http://", "https://")):
-        shortener_url = f"http://{shortener_url}"  # Add default protocol
-
+    # Log the shortener URL and long URL for debugging
     logging.info(f"Using shortener URL: {shortener_url}")
-
-    # Log the long URL for debugging
     logging.info(f"Original Link: {link}")
 
     try:
-        # Initialize Shortzy with fixed shortener_url
+        # Initialize Shortzy without altering the shortener_url
         shortzy = Shortzy(api_key=shortener_api, base_site=shortener_url)
         short_link = await shortzy.convert(link)
         return short_link
     except Exception as e:
         logging.error(f"Error using Shortzy: {e}")
         raise
-
 
 def get_exp_time(seconds):
     periods = [('days', 86400), ('hours', 3600), ('mins', 60), ('secs', 1)]
