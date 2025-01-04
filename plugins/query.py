@@ -757,10 +757,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
                 shortener_url = site_msg.text.strip()
 
-            # Step 2: Validate if the URL is correct
-                if not shortener_url.startswith("http") or "://" not in shortener_url:
-                    await site_msg.reply("⚠️ Please provide a valid URL.")
-                    return
 
             # Confirm the shortener site URL
                 await site_msg.reply(f"Shortener site URL set to: {shortener_url}\nNow please send the API key.")
