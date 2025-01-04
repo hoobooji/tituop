@@ -163,20 +163,28 @@ default_verify = {
 async def get_verify_status(user_id):
     return await db.get_verify_status(user_id)
 
-async def get_shortlink(long_url):
+async def get_shortlink(link):
     # Fetch shortener details from the database
     shortener_url = await db.get_shortener_url()
     shortener_api = await db.get_shortener_api()
 
-    # Validate shortener configuration
+    # Validate and fix shortener_url
     if not shortener_url or not shortener_api:
-        raise ValueError("Shortener URL or API key is not configured in the database.")
+        logging.error("Shortener URL or API key is missing.")
+        raise ValueError("Shortener details are not configured.")
+
+    if not shortener_url.startswith(("http://", "https://")):
+        shortener_url = f"http://{shortener_url}"  # Add default protocol
+
+    logging.info(f"Using shortener URL: {shortener_url}")
+
+    # Log the long URL for debugging
+    logging.info(f"Original Link: {link}")
 
     try:
-        # Initialize Shortzy
+        # Initialize Shortzy with fixed shortener_url
         shortzy = Shortzy(api_key=shortener_api, base_site=shortener_url)
-        # Convert long URL to short URL
-        short_link = await shortzy.convert(long_url)
+        short_link = await shortzy.convert(link)
         return short_link
     except Exception as e:
         logging.error(f"Error using Shortzy: {e}")
