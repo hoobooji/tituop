@@ -811,19 +811,22 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
             # Check if both shortener URL and API are available
                 if shortener_url and shortener_api:
+            # If both URL and API key are available, the shortener is considered "Enabled ✅"
                     shortener_status = "Enabled ✅"
-                    mode = 'Disable Shortener ❌'
+                    mode_button = InlineKeyboardButton('Disable Shortener ❌', callback_data='disable_shortener')
                 else:
+            # If either URL or API key is missing, the shortener is "Disabled ❌"
                     shortener_status = "Disabled ❌"
-                    mode = 'Enable Shortener ✅'
+                    mode_button = InlineKeyboardButton('Enable Shortener ✅', callback_data='set_shortener_details')
 
+       
             # Refresh the settings and update the message with new content
                 await message.reply_photo(
                     photo=START_PIC,
                     caption=SET_SHORTENER_CMD_TXT.format(
                         shortener_status=shortener_status),
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(mode, callback_data='set_shortener_details')],
+                        [mode_button],
                         [InlineKeyboardButton('Settings ⚙️', callback_data='shortener_settings'),
                      InlineKeyboardButton('🔄 Refresh', callback_data='set_shortener')],
                         [InlineKeyboardButton('Set Verified Time ⏱', callback_data='set_verify_time'),
