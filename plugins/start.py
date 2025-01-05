@@ -522,9 +522,7 @@ async def help(client: Client, message: Message):
             InlineKeyboardButton("🥰 Dᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/rohit_1888")
         ]
     ]
-    if SUPPORT_GROUP:
-        buttons.insert(0, [InlineKeyboardButton("🌐 Sᴜᴘᴘᴏʀᴛ Cʜᴀᴛ Gʀᴏᴜᴘ", url="https://t.me/Weebs_Weekends")])
-
+    
     try:
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
