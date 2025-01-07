@@ -19,6 +19,7 @@ from database.database import *
 from database.database import db
 from database.db_premium import *
 from config import *
+from plugins.FORMATS import *
 from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid
 from datetime import datetime, timedelta
 from pytz import timezone
