@@ -519,14 +519,14 @@ async def help(client: Client, message: Message):
     buttons = [
         [
             InlineKeyboardButton("🤖 Oᴡɴᴇʀ", url=f"tg://openmessage?user_id={OWNER_ID}"), 
-            InlineKeyboardButton("🥰 Dᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/rohit_1888")
+            InlineKeyboardButton("🥰 Dᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/rohit1888")
         ]
     ]
     
     try:
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
-            photo = HELP,
+            photo = FORCE_PIC,
             caption = HELP_TEXT.format(
                 first = message.from_user.first_name,
                 last = message.from_user.last_name,
