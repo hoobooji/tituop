@@ -43,8 +43,7 @@ FORCE_PIC = os.environ.get("FORCE_PIC", "https://telegra.ph/file/e292b12890b8b4b
 
 QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/B7w.png")
 
-#start message
-START_MSG = os.environ.get("START_MESSAGE", "Hello {mention}\n\nI can store private files in Specified Channel and other users can access it from special link.")
+
 
 
 
