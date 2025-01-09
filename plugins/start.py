@@ -31,6 +31,16 @@ logging.basicConfig(level=logging.INFO)
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
+    # Default initialization
+    AUTO_DEL = False
+    DEL_TIMER = 0
+    HIDE_CAPTION = False
+    CHNL_BTN = None
+    PROTECT_MODE = False
+    last_message = None
+    messages = []
+
+
     VERIFY_EXPIRE = await db.get_verified_time()  # Fetch verification expiration time
     logging.info(f"Received /start command from user ID: {id}")
 
@@ -342,10 +352,10 @@ async def get_users(client: Bot, message: Message):
     users = await db.full_userbase()
     await msg.edit(f"{len(users)} users are using this bot")
 
-@Bot.on_message(filters.private & filters.command('broadcast') & filters.user(OWNER_ID))
+@Bot.on_message(filters.private & filters.command('broadcast') & is_admin)
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
-        query = await full_userbase()
+        query = await db.full_userbase()
         broadcast_msg = message.reply_to_message
         total = 0
         successful = 0
