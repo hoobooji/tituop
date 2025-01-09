@@ -82,29 +82,32 @@ async def is_userJoin(client, user_id, channel_id):
         return False
 #=============================================================================================================================================================================
 
-async def encode(string):
+async def encode(string: str) -> str:
     string_bytes = string.encode("ascii")
     base64_bytes = base64.urlsafe_b64encode(string_bytes)
-    base64_string = (base64_bytes.decode("ascii")).strip("=")
+    base64_string = base64_bytes.decode("ascii").strip("=")
     return base64_string
 
 async def decode(base64_string: str) -> str:
     try:
         base64_string = base64_string.strip()  # Strip any extraneous whitespace
+        # Validate string length for proper padding
+        if len(base64_string) % 4 == 1:
+            raise ValueError("Invalid base64-encoded string length")
+        
         # Ensure proper padding
         padding = '=' * (-len(base64_string) % 4)
         base64_string += padding
-        base64_bytes = base64_string.encode('ascii')
+        base64_bytes = base64_string.encode("ascii")
         # Decode the base64 string
         string_bytes = base64.urlsafe_b64decode(base64_bytes)
         # Convert bytes to string
-        string = string_bytes.decode('ascii')
+        string = string_bytes.decode("ascii")
         return string
     except (binascii.Error, ValueError) as e:
         # Handle decoding errors
         print(f"Failed to decode base64 string: {e}")
         return None
-
 async def get_messages(client, message_ids):
     messages = []
     total_messages = 0
