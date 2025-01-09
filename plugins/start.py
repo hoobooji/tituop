@@ -31,6 +31,7 @@ logging.basicConfig(level=logging.INFO)
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
+
     # Default initialization
     AUTO_DEL = False
     DEL_TIMER = 0
@@ -39,7 +40,6 @@ async def start_command(client: Client, message: Message):
     PROTECT_MODE = False
     last_message = None
     messages = []
-
 
     VERIFY_EXPIRE = await db.get_verified_time()  # Fetch verification expiration time
     logging.info(f"Received /start command from user ID: {id}")
@@ -123,20 +123,25 @@ async def start_command(client: Client, message: Message):
             await temp_msg.delete()
 
             AUTO_DEL, DEL_TIMER, HIDE_CAPTION, CHNL_BTN, PROTECT_MODE = await asyncio.gather(
-                db.get_auto_delete(), db.get_del_timer(), db.get_hide_caption(), db.get_channel_button(), db.get_protect_content()
+                db.get_auto_delete(), db.get_del_timer(), db.get_hide_caption(),
+                db.get_channel_button(), db.get_protect_content()
             )
+
             if CHNL_BTN:
                 button_name, button_link = await db.get_channel_button_link()
 
             for idx, msg in enumerate(messages):
                 original_caption = msg.caption.html if msg.caption else ""
-                caption = f"{original_caption}\n\n{CUSTOM_CAPTION}"
+                caption = (
+                    f"{original_caption}\n\n{CUSTOM_CAPTION}"
                     if CUSTOM_CAPTION and msg.document else original_caption
                 )
                 if HIDE_CAPTION and (msg.document or msg.audio):
                     caption += f"\n\n{CUSTOM_CAPTION}"
 
-                reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text=button_name, url=button_link)]]) if CHNL_BTN else msg.reply_markup
+                reply_markup = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton(text=button_name, url=button_link)]]
+                ) if CHNL_BTN else msg.reply_markup
 
                 try:
                     copied_msg = await msg.copy(
@@ -144,18 +149,23 @@ async def start_command(client: Client, message: Message):
                         reply_markup=reply_markup, protect_content=PROTECT_MODE
                     )
                     if AUTO_DEL:
-                    asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
-                        if idx == len(messages) - 1: last_message = copied_msg
+                        asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                        if idx == len(messages) - 1:
+                            last_message = copied_msg
 
                 except FloodWait as e:
                     await asyncio.sleep(e.x)
-                    copied_msg = await msg.copy(chat_id=id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_MODE)
+                    copied_msg = await msg.copy(
+                        chat_id=id, caption=caption, parse_mode=ParseMode.HTML,
+                        reply_markup=reply_markup, protect_content=PROTECT_MODE
+                    )
                     await asyncio.sleep(0.1)
-                
+
                     if AUTO_DEL:
                         asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
-                        if idx == len(messages) - 1: last_message = copied_msg
-                        
+                        if idx == len(messages) - 1:
+                            last_message = copied_msg
+
             if AUTO_DEL and last_message:
                 asyncio.create_task(auto_del_notification(client.username, last_message, DEL_TIMER, message.command[1]))
 
@@ -170,36 +180,30 @@ async def start_command(client: Client, message: Message):
                         token = ''.join(random.choices(rohit.ascii_letters + rohit.digits, k=10))
                         await db.update_verify_status(id, verify_token=token, link="")
 
-                # Create the long URL
                         long_url = f"https://telegram.dog/{client.username}?start=verify_{token}"
-
-                # Get the short link using the helper function
                         short_link = await get_shortlink(long_url)
 
                         tut_vid_url = await db.get_tut_video() or TUT_VID
 
-                # Buttons for the message
                         btn = [
                             [InlineKeyboardButton("Click here", url=short_link),
-                     InlineKeyboardButton('How to use the bot', url=tut_vid_url)],
+                             InlineKeyboardButton('How to use the bot', url=tut_vid_url)],
                             [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')]
                         ]
 
-                # Reply with verification message
                         await message.reply(
                             f"Your ads token is expired or invalid. Please verify to access the files.\n\n"
                             f"Token Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\n"
                             f"What is the token?\n\n"
                             f"This is an ads token. By passing 1 ad, you can use the bot for 24 hours.",
                             reply_markup=InlineKeyboardMarkup(btn),
-                            protect_content=False       
+                            protect_content=False
                         )
-                    
                         return
                 except Exception as e:
                     logging.error(f"Error in verification process: {e}")
                     await message.reply("An unexpected error occurred. Please try again later.")
- 
+
             argument = string.split("-")
             if len(argument) == 3:
                 try:
@@ -225,47 +229,60 @@ async def start_command(client: Client, message: Message):
             await temp_msg.delete()
 
             AUTO_DEL, DEL_TIMER, HIDE_CAPTION, CHNL_BTN, PROTECT_MODE = await asyncio.gather(
-                db.get_auto_delete(), db.get_del_timer(), db.get_hide_caption(), db.get_channel_button(), db.get_protect_content()
+                db.get_auto_delete(), db.get_del_timer(), db.get_hide_caption(),
+                db.get_channel_button(), db.get_protect_content()
             )
+
             if CHNL_BTN:
                 button_name, button_link = await db.get_channel_button_link()
 
             for idx, msg in enumerate(messages):
                 original_caption = msg.caption.html if msg.caption else ""
-                caption = f"{original_caption}\n\n{CUSTOM_CAPTION}"
+                caption = (
+                    f"{original_caption}\n\n{CUSTOM_CAPTION}"
                     if CUSTOM_CAPTION and msg.document else original_caption
                 )
                 if HIDE_CAPTION and (msg.document or msg.audio):
                     caption += f"\n\n{CUSTOM_CAPTION}"
 
-                reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text=button_name, url=button_link)]]) if CHNL_BTN else msg.reply_markup
+                reply_markup = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton(text=button_name, url=button_link)]]
+                ) if CHNL_BTN else msg.reply_markup
+
                 try:
                     copied_msg = await msg.copy(
                         chat_id=id, caption=caption, parse_mode=ParseMode.HTML,
                         reply_markup=reply_markup, protect_content=PROTECT_MODE
                     )
                     if AUTO_DEL:
-                    asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
-                        if idx == len(messages) - 1: last_message = copied_msg
+                        asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                        if idx == len(messages) - 1:
+                            last_message = copied_msg
 
                 except FloodWait as e:
                     await asyncio.sleep(e.x)
-                    copied_msg = await msg.copy(chat_id=id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_MODE)
+                    copied_msg = await msg.copy(
+                        chat_id=id, caption=caption, parse_mode=ParseMode.HTML,
+                        reply_markup=reply_markup, protect_content=PROTECT_MODE
+                    )
                     await asyncio.sleep(0.1)
-                
+
                     if AUTO_DEL:
                         asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
-                        if idx == len(messages) - 1: last_message = copied_msg
-                        
+                        if idx == len(messages) - 1:
+                            last_message = copied_msg
+
             if AUTO_DEL and last_message:
                 asyncio.create_task(auto_del_notification(client.username, last_message, DEL_TIMER, message.command[1]))
 
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("😊 About Me", callback_data="about"), InlineKeyboardButton("🔒 Close", callback_data="close")],
+                [InlineKeyboardButton("😊 About Me", callback_data="about"),
+                 InlineKeyboardButton("🔒 Close", callback_data="close")],
                 [InlineKeyboardButton('BUY PREMIUM', callback_data='buy_prem')],
-                [InlineKeyboardButton('⛩️ JAV', url='https://t.me/Javpostr'), InlineKeyboardButton('⚡️ Support', url='https://t.me/javposts')],
+                [InlineKeyboardButton('⛩️ JAV', url='https://t.me/Javpostr'),
+                 InlineKeyboardButton('⚡️ Support', url='https://t.me/javposts')],
                 [InlineKeyboardButton('🌐 Source Code', url='https://t.me/rohit_1888')]
             ]
         )
@@ -281,7 +298,6 @@ async def start_command(client: Client, message: Message):
             ),
             reply_markup=reply_markup,
         )
-
 
 #=====================================================================================##
 
