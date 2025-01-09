@@ -130,8 +130,7 @@ async def start_command(client: Client, message: Message):
 
             for idx, msg in enumerate(messages):
                 original_caption = msg.caption.html if msg.caption else ""
-                caption = (
-                    CUSTOM_CAPTION.format(previouscaption=original_caption, filename=msg.document.file_name)
+                caption = f"{original_caption}\n\n{CUSTOM_CAPTION}"
                     if CUSTOM_CAPTION and msg.document else original_caption
                 )
                 if HIDE_CAPTION and (msg.document or msg.audio):
