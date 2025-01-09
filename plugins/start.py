@@ -153,7 +153,7 @@ async def start_command(client: Client, message: Message):
                     await asyncio.sleep(0.1)
                 
                     if AUTO_DEL:
-                    asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                        asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
                         if idx == len(messages) - 1: last_message = copied_msg
                         
             if AUTO_DEL and last_message:
@@ -245,10 +245,20 @@ async def start_command(client: Client, message: Message):
                         reply_markup=reply_markup, protect_content=PROTECT_MODE
                     )
                     if AUTO_DEL:
-                        asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                    asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                        if idx == len(messages) - 1: last_message = copied_msg
 
                 except FloodWait as e:
                     await asyncio.sleep(e.x)
+                    copied_msg = await msg.copy(chat_id=id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_MODE)
+                    await asyncio.sleep(0.1)
+                
+                    if AUTO_DEL:
+                        asyncio.create_task(delete_message(copied_msg, DEL_TIMER))
+                        if idx == len(messages) - 1: last_message = copied_msg
+                        
+            if AUTO_DEL and last_message:
+                asyncio.create_task(auto_del_notification(client.username, last_message, DEL_TIMER, message.command[1]))
 
     else:
         reply_markup = InlineKeyboardMarkup(
