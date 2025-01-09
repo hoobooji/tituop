@@ -222,15 +222,13 @@ async def start_command(client: Client, message: Message):
 
             for idx, msg in enumerate(messages):
                 original_caption = msg.caption.html if msg.caption else ""
-                caption = (
-                    CUSTOM_CAPTION.format(previouscaption=original_caption, filename=msg.document.file_name)
+                caption = f"{original_caption}\n\n{CUSTOM_CAPTION}"
                     if CUSTOM_CAPTION and msg.document else original_caption
                 )
                 if HIDE_CAPTION and (msg.document or msg.audio):
                     caption += f"\n\n{CUSTOM_CAPTION}"
 
                 reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text=button_name, url=button_link)]]) if CHNL_BTN else msg.reply_markup
-
                 try:
                     copied_msg = await msg.copy(
                         chat_id=id, caption=caption, parse_mode=ParseMode.HTML,
