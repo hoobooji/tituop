@@ -134,9 +134,9 @@ async def start_command(client: Client, message: Message):
                 original_caption = msg.caption.html if msg.caption else ""
                 caption = (
                     f"{original_caption}\n\n{CUSTOM_CAPTION}"
-                    if CUSTOM_CAPTION and msg.document else original_caption
+                    if CUSTOM_CAPTION else original_caption
                 )
-                if HIDE_CAPTION and (msg.document or msg.audio):
+                if HIDE_CAPTION and (msg.document or msg.audio or msg.video or msg.photo):
                     caption += f"\n\n{CUSTOM_CAPTION}"
 
                 reply_markup = InlineKeyboardMarkup(
@@ -240,9 +240,9 @@ async def start_command(client: Client, message: Message):
                 original_caption = msg.caption.html if msg.caption else ""
                 caption = (
                     f"{original_caption}\n\n{CUSTOM_CAPTION}"
-                    if CUSTOM_CAPTION and msg.document else original_caption
+                    if CUSTOM_CAPTION else original_caption
                 )
-                if HIDE_CAPTION and (msg.document or msg.audio):
+                if HIDE_CAPTION and (msg.document or msg.audio or msg.video or msg.photo):
                     caption += f"\n\n{CUSTOM_CAPTION}"
 
                 reply_markup = InlineKeyboardMarkup(
