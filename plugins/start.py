@@ -84,7 +84,7 @@ async def start_command(client: Client, message: Message):
             await db.update_verify_status(id, is_verified=True, verified_time=time.time())
             if verify_status["link"] == "":
                 await message.reply(
-                    "Your token has been successfully verified and is valid for 24 hours.",
+                    "Your token has been successfully verified and is valid for {get_exp_time(VERIFY_EXPIRE)}.",
                     reply_markup=PREMIUM_BUTTON,
                     protect_content=False,
                     quote=True
@@ -195,7 +195,7 @@ async def start_command(client: Client, message: Message):
                             f"Your ads token is expired or invalid. Please verify to access the files.\n\n"
                             f"Token Timeout: {get_exp_time(VERIFY_EXPIRE)}\n\n"
                             f"What is the token?\n\n"
-                            f"This is an ads token. By passing 1 ad, you can use the bot for 24 hours.",
+                            f"This is an ads token. By passing 1 ad, you can use the bot for  {get_exp_time(VERIFY_EXPIRE)}.",
                             reply_markup=InlineKeyboardMarkup(btn),
                             protect_content=False
                         )
