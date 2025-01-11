@@ -67,7 +67,7 @@ PREMIUM_BUTTON2 = reply_markup=InlineKeyboardMarkup(
 OWNER_TAG = os.environ.get("OWNER_TAG", "rohit_1888")
 
 #UPI ID
-UPI_ID = os.environ.get("UPI_ID", "@rohit23pnb@axl")
+UPI_ID = os.environ.get("UPI_ID", "rohit23pnb@axl")
 
 #UPI QR CODE IMAGE
 UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://t.me/paymentbot6/2")
@@ -80,21 +80,20 @@ SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/rohit_1888")
 #Time and its price
 
 #7 Days
-PRICE1 = os.environ.get("PRICE1", "69 rs")
+PRICE1 = os.environ.get("PRICE1", "0 rs")
 
 #1 Month
-PRICE2 = os.environ.get("PRICE2", "130 rs")
+PRICE2 = os.environ.get("PRICE2", "60 rs")
 
 #3 Month
-PRICE3 = os.environ.get("PRICE3", "330 rs")
+PRICE3 = os.environ.get("PRICE3", "150 rs")
 
 #6 Month
-PRICE4 = os.environ.get("PRICE4", "700 rs")
+PRICE4 = os.environ.get("PRICE4", "280 rs")
 
 #1 Year
-PRICE5 = os.environ.get("PRICE5", "1300 rs")
-
-
+PRICE5 = os.environ.get("PRICE5", "550 rs")
+
 #===================(END)========================#
 
 
