@@ -9,7 +9,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 #Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7223199796:AAFxWdi9QlmEkZWlV39-g3GSLiGRchX7Nys")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7542241757:AAG-Qx8U60UEQzB-3JF7ssayN8I4mkJp3eo")
 
 #Your API ID from my.telegram.org
 API_ID = int(os.environ.get("API_ID", "9698652"))
@@ -26,7 +26,7 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "7328629001"))
 #Port
 PORT = os.environ.get("PORT", "5272")
 
-DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://nshubh345:1FmseyW0TKaWNMNo@cluster0.pgewb.mongodb.net/?retryWrites=true&w=majority")
+DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://Mrdaxx123:Mrdaxx123@cluster0.q1da65h.mongodb.net/?retryWrites=true&w=majority")
 DB_NAME = os.environ.get("DATABASE_NAME", "test")
 
 
