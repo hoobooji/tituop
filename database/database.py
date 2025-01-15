@@ -69,6 +69,19 @@ class Rohit:
 
     # Database Methods to Set, Get, and Deactivate Header/Footer
 
+    async def get_caption_state(self, user_id):
+        """Fetches the current caption state for a user from self.login_data."""
+        # Return the caption state from login_data, defaulting to True (enabled) if not found
+        return self.login_data.get(user_id, {}).get("caption_state", True)
+
+    async def set_caption_state(self, user_id, state):
+        """Sets the caption state for a user in self.login_data."""
+        if user_id not in self.login_data:
+            self.login_data[user_id] = {}
+        self.login_data[user_id]["caption_state"] = state
+        # Optionally, if you want to persist this to a database, call a database method here
+
+
 # Adding header/footer fields to the database
     async def set_header(self, user_id: int, header_text: str):
         try:
