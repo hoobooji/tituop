@@ -37,7 +37,7 @@ async def decode(base64_string: str) -> list:
     'start', 'users', 'broadcast', 'batch', 'genlink', 'stats', 'addpaid', 'removepaid', 'listpaid',
     'help', 'cmd', 'info', 'add_fsub', 'fsub_chnl', 'restart', 'del_fsub', 'add_admins', 'del_admins', 
     'admin_list', 'cancel', 'auto_del', 'forcesub', 'files', 'add_banuser', 'token', 'del_banuser', 'banuser_list', 
-    'status', 'req_fsub', 'myplan'
+    'status', 'req_fsub', 'myplan', 'login', 'header', 'footer'
 ]))
 
 async def fetch_and_upload_content(client: Client, message: Message):
