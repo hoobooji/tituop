@@ -8,6 +8,8 @@ from config import DB_URI, DB_NAME
 from bot import Bot
 import logging
 from datetime import datetime, timedelta
+from motor.motor_asyncio import AsyncIOMotorClient
+
 
 dbclient = pymongo.MongoClient(DB_URI)
 database = dbclient[DB_NAME]
@@ -70,16 +72,26 @@ class Rohit:
     # Database Methods to Set, Get, and Deactivate Header/Footer
 
     async def get_caption_state(self, user_id):
-        """Fetches the current caption state for a user from self.login_data."""
-        # Return the caption state from login_data, defaulting to True (enabled) if not found
-        return self.login_data.get(user_id, {}).get("caption_state", True)
+        user_data = await self.login_data.find_one({"user_id": user_id})
+        if user_data:
+            return user_data.get("caption_state", True)  # Default to True (enabled) if not found
+        return True  # Default to True if user data doesn't exist
 
     async def set_caption_state(self, user_id, state):
-        """Sets the caption state for a user in self.login_data."""
-        if user_id not in self.login_data:
-            self.login_data[user_id] = {}
-        self.login_data[user_id]["caption_state"] = state
-        # Optionally, if you want to persist this to a database, call a database method here
+        user_data = await self.login_data.find_one({"user_id": user_id})
+        
+        if user_data:
+            # Update the existing user document
+            await self.login_data.update_one(
+                {"user_id": user_id},
+                {"$set": {"caption_state": state}}
+            )
+        else:
+            # Insert a new user document if the user doesn't exist
+            await self.login_data.insert_one({
+                "user_id": user_id,
+                "caption_state": state
+            })
 
 
 # Adding header/footer fields to the database
