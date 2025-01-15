@@ -10,7 +10,7 @@ from pyrogram.enums import ParseMode, ChatAction
 from bot import Bot
 from config import *
 from database.database import *
-
+from helper_func import *
 
 DB_CHANNEL = CHANNEL_ID
 FILE_SIZE_LIMIT = 1 * 1024 * 1024 * 1024  # 1GB limit
