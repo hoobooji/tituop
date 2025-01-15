@@ -1138,4 +1138,24 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         except Exception as e:
             logging.error(f"Error occurred while disabling header: {e}")
             await query.message.reply("❌ **Error Occurred**\nPlease try again later.")
+
+
+    elif data == "toggle_caption":
+    """Handles the callback from the toggle caption button."""
+        user_id = callback_query.from_user.id
+    # Get the current caption state and toggle it
+        current_state = await client.get_caption_state(user_id)
+    new_state = not current_state
+    await client.set_caption_state(user_id, new_state)
+
+    # Update the button text dynamically
+    caption_button_text = "✅ Captions Enabled" if new_state else "❌ Captions Disabled"
+
+    # Edit the message with the new button
+    await callback_query.message.edit_text(
+        f"Captions are now {'enabled' if new_state else 'disabled'}.",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(caption_button_text, callback_data="toggle_caption")]
+        ])
+    )
     
