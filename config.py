@@ -9,25 +9,25 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 #Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7542241757:AAG-Qx8U60UEQzB-3JF7ssayN8I4mkJp3eo")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7615437696:AAHs0_Bu52Fr4uMGh1rYqKExzfxoU4iKXvo")
 
 #Your API ID from my.telegram.org
-API_ID = int(os.environ.get("API_ID", "9698652"))
+API_ID = int(os.environ.get("API_ID", "23702904"))
 
 #Your API Hash from my.telegram.org
-API_HASH = os.environ.get("API_HASH", "b354710ab18b84e00b65c62ba7a9c043")
+API_HASH = os.environ.get("API_HASH", "e67f2061769a4d4a44dca1781f9bb619")
 
 #Your db channel Id
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002008354608"))
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002399704662"))
 
 #OWNER ID
-OWNER_ID = int(os.environ.get("OWNER_ID", "6992533662"))
+OWNER_ID = int(os.environ.get("OWNER_ID", "6358850593"))
 
 #Port
 PORT = os.environ.get("PORT", "6726")
 
-DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://koyeb77user:rohit870@cluster0.wgdkp.mongodb.net/?retryWrites=true&w=majority")
-DB_NAME = os.environ.get("DATABASE_NAME", "cphdlust1234")
+DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://wtflinksofficial:wtflinksofficial@cluster0.ff5tu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DB_NAME = os.environ.get("DATABASE_NAME", "wtflinksofficial")
 
 
 
@@ -50,7 +50,7 @@ QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/B7w.png")
 
 
 #set your Custom Caption here, Keep None for Disable Custom Caption
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>Ê™Ê @Javpostr</b>")
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b></b>")
 
 #Collection of pics for Bot // #Optional but atleast one pic link should be replaced if you don't want predefined links
 PICS = (os.environ.get("PICS", "https://envs.sh/4Iq.jpg https://envs.sh/4IW.jpg https://envs.sh/4IB.jpg https://envs.sh/4In.jpg")).split() #Required
@@ -66,7 +66,7 @@ PREMIUM_BUTTON2 = reply_markup=InlineKeyboardMarkup(
         [[InlineKeyboardButton("Remove Ads In One Click", callback_data="buy_prem")]]
 ) 
 
-OWNER_TAG = os.environ.get("OWNER_TAG", "rohit_1888")
+OWNER_TAG = os.environ.get("OWNER_TAG", "zenotty")
 
 #UPI ID
 UPI_ID = os.environ.get("UPI_ID", "rohit23pnb@axl")
@@ -75,7 +75,7 @@ UPI_ID = os.environ.get("UPI_ID", "rohit23pnb@axl")
 UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://t.me/paymentbot6/2")
 
 #SCREENSHOT URL of ADMIN for verification of payments
-SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/rohit_1888")
+SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/zenotty")
 
 
 
