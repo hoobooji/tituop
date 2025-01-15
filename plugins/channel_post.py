@@ -107,41 +107,47 @@ async def fetch_and_upload_content(client: Client, message: Message):
             new_link = f"https://t.me/{client.username}?start={base64_string}"
 
             # Fetch header and footer from the database
-            header = await db.get_header(message.from_user.id) or ""
-            footer = await db.get_footer(message.from_user.id) or ""
+            
+             header = await db.get_header(message.from_user.id) or ""
+             footer = await db.get_footer(message.from_user.id) or ""
+
+            # Get the caption state (whether it's enabled or not)
+             caption_enabled = await db.get_caption_state(message.from_user.id) or ""
 
             # Combine header, link, and footer
-            final_message = f"{header}\n\n<b>Your content has been processed successfully:</b>\n{new_link}\n\n{footer}"
+             final_message = f"{header}\n\n<b>Your content has been processed successfully:</b>\n{new_link}\n\n{footer}"
 
             # Replace only the link in the caption
-            if message.caption:  # For photo messages with captions
-                updated_caption = f"{header}\n\n{message.caption.replace(link, new_link)}\n\n{footer}"
-                await message.reply_photo(
-                    photo=message.photo.file_id,
-                    caption=updated_caption,
-                    reply_markup=InlineKeyboardMarkup([
+             if message.caption and caption_enabled:  # For photo messages with captions and captions enabled
+                 updated_caption = f"{header}\n\n{message.caption.replace(link, new_link)}\n\n{footer}"
+                 await message.reply_photo(
+                     photo=message.photo.file_id,
+                     caption=updated_caption,
+                     reply_markup=InlineKeyboardMarkup([
                         [InlineKeyboardButton("🔗 Share Link", url=f'https://telegram.me/share/url?url={new_link}')]
-                    ])
-                )
-            else:  # For text messages or captions without a photo
-                reply_markup = InlineKeyboardMarkup([
+                     ])
+                 )
+             else:  # For text messages or captions without a photo, or if captions are disabled
+                 reply_markup = InlineKeyboardMarkup([
                     [InlineKeyboardButton("🔗 Share Link", url=f'https://telegram.me/share/url?url={new_link}')]
-                ])
-                await message.reply_text(
+                 ])
+                 await message.reply_text(
                     final_message,
                     reply_markup=reply_markup,
                     disable_web_page_preview=True,
                 )
-        else:  # No uploaded links; handle with header and footer
-            header = await db.get_header(message.from_user.id) or ""
-            footer = await db.get_footer(message.from_user.id) or ""
-            no_content_message = f"{header}\n\n<b>No new content was fetched after processing your link.</b>\n\n{footer}"
-            await message.reply_text(no_content_message)
-
-    except Exception as e:
+         else:  # No uploaded links; handle with header and footer
+             header = await db.get_header(message.from_user.id) or ""
+             footer = await db.get_footer(message.from_user.id) or ""
+             no_content_message = f"{header}\n\n<b>No new content was fetched after processing your link.</b>\n\n{footer}"
+             await message.reply_text(no_content_message)
+          except Exception as e:
         await message.reply_text(f"An error occurred: {e}")
+
     finally:
-        await acc.stop()
+        # Ensure to stop the client session if it was started
+        if 'acc' in locals():
+            await acc.stop()
 
 async def process_and_upload(client, acc, msg_type, response):
     """Processes and uploads a single message to the database channel."""
