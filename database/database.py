@@ -54,6 +54,7 @@ class Rohit:
         self.hide_caption_data = self.database['hide_caption']
         self.protect_content_data = self.database['protect_content']
         self.channel_button_data = self.database['channel_button']
+        self.login_data = self.database['login']
 
         self.settings_data = self.database['settings']
         self.del_timer_data = self.database['del_timer']
@@ -62,6 +63,23 @@ class Rohit:
         self.rqst_fsub_data = self.database['request_forcesub']
         self.rqst_fsub_Channel_data = self.database['request_forcesub_channel']
         self.store_reqLink_data = self.database['store_reqLink']
+
+
+    #login data
+    async def set_session(self, user_id: int, session: str):
+        """Store or update the user's session string in the database."""
+        await self.login_data.update_one(
+            {'_id': user_id},
+            {'$set': {'session': session}},
+            upsert=True
+        )
+
+    async def get_session(self, user_id: int):
+        """Retrieve the user's session string from the database."""
+        user = await self.login_data.find_one({'_id': user_id})
+        if user:
+            return user.get('session')
+        return None
 
     # Shortener Token
     async def set_shortener_url(self, url):
