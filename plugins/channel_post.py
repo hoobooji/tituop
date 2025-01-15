@@ -105,7 +105,7 @@ async def fetch_and_upload_content(client: Client, message: Message):
             link = next((word for word in response_message.text.split() if "https://t.me/" in word and "?start=" in word), None)
 
         if not link:
-            return await message.reply_text("Invalid link! Please make sure the link is correct and contains '?start='.")
+            return 
 
         # Parse the link
         link_parts = link.split("?start=")
