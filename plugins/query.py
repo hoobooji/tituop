@@ -1007,4 +1007,135 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
         else:
             await query.message.reply("Failed to disable the shortener. Please try again.")
+
+
+    elif data == "set_footer":
+        id = query.from_user.id
+        await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+
+        try:
+            # Fetch the current footer from the database for the specific user
+            current_footer = await db.get_footer(id)
+
+            # Prompt the user to input the new footer text
+            set_msg = await client.ask(
+                chat_id=id,
+                text=f'<b><blockquote>⏳ Cᴜʀʀᴇɴᴛ Fᴏᴏᴛᴇʀ: {current_footer if current_footer else "Not Set"}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ғᴏᴏᴛᴇʀ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>Thank you for using our bot!</code></b></blockquote>',
+                timeout=60
+            )
+
+            # Validate the user input for a valid footer
+            footer_text = set_msg.text.strip()
+
+            if len(footer_text) > 0 and len(footer_text) <= 100:  # Check length constraints
+                # Save the new footer to the database
+                await db.set_footer(id, footer_text)
+
+                # Confirm the update to the user
+                await set_msg.reply(f"<b><i>Fᴏᴏᴛᴇʀ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📋 Cᴜʀʀᴇɴᴛ Fᴏᴏᴛᴇʀ: {footer_text}</blockquote></b>")
+            else:
+                # If the footer is invalid, prompt the user to try again
+                markup = [[InlineKeyboardButton('◈ Sᴇᴛ Fᴏᴏᴛᴇʀ 📋', callback_data='set_footer')]]
+                return await set_msg.reply(
+                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ғᴏᴏᴛᴇʀ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>Thank you for using our bot!</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+
+        except Exception as e:
+            try:
+                # Handle any exceptions that occur during the process
+                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                print(f"! Error Occurred on callback data = 'set_footer' : {e}")
+            except BaseException:
+                # If an error occurs while sending the error message, send a timeout message
+                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                print(f"! Error Occurred on callback data = 'set_footer' -> Reason: 1 minute Time out ..")
+
+
+    elif data == "set_header":
+        id = query.from_user.id
+        await query.answer("♻️ Qᴜᴇʀʏ Pʀᴏᴄᴇssɪɴɢ....")
+
+        try:
+            # Fetch the current header from the database for the specific user
+            current_header = await db.get_header(id)
+
+            # Prompt the user to input the new header text
+            set_msg = await client.ask(
+                chat_id=id,
+                text=f'<b><blockquote>⏳ Cᴜʀʀᴇɴᴛ Hᴇᴀᴅᴇʀ: {current_header if current_header else "Not Set"}</blockquote>\n\nTᴏ ᴄʜᴀɴɢᴇ, Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ʜᴇᴀᴅᴇʀ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>Welcome to our bot!</code></b></blockquote>',
+                timeout=60
+            )
+
+            # Validate the user input for a valid header
+            header_text = set_msg.text.strip()
+
+            if len(header_text) > 0 and len(header_text) <= 100:  # Check length constraints
+                # Save the new header to the database
+                await db.set_header(id, header_text)
+
+                # Confirm the update to the user
+                await set_msg.reply(f"<b><i>Hᴇᴀᴅᴇʀ sᴇᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ✅</i>\n<blockquote>📋 Cᴜʀʀᴇɴᴛ Hᴇᴀᴅᴇʀ: {header_text}</blockquote></b>")
+            else:
+                # If the header is invalid, prompt the user to try again
+                markup = [[InlineKeyboardButton('◈ Sᴇᴛ Hᴇᴀᴅᴇʀ 📋', callback_data='set_header')]]
+                return await set_msg.reply(
+                    "<b>Pʟᴇᴀsᴇ sᴇɴᴅ ᴀ ᴠᴀʟɪᴅ ʜᴇᴀᴅᴇʀ.\n<blockquote>Fᴏʀ ᴇxᴀᴍᴘʟᴇ: <code>Welcome to our bot!</code></blockquote>\n\n<i>Tʀʏ ᴀɢᴀɪɴ ʙʏ ᴄʟɪᴄᴋɪɴɢ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ..</i></b>", reply_markup=InlineKeyboardMarkup(markup))
+
+        except Exception as e:
+            try:
+                # Handle any exceptions that occur during the process
+                await set_msg.reply(f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+                print(f"! Error Occurred on callback data = 'set_header' : {e}")
+            except BaseException:
+                # If an error occurs while sending the error message, send a timeout message
+                await client.send_message(id, text=f"<b>! Eʀʀᴏʀ Oᴄᴄᴜʀʀᴇᴅ..\n<blockquote><i>Rᴇᴀsᴏɴ: 1 minute Time out ..</i></b></blockquote>", disable_notification=True)
+                print(f"! Error Occurred on callback data = 'set_header' -> Reason: 1 minute Time out ..")
+
+
+    # Disable Footer
+    elif data == "disable_footer":
+        id = query.from_user.id  # Get the user ID
+        await query.answer("♻️ Query Processing...")
+
+        try:
+        # Deactivate (delete all footer data) in the database
+            success = await db.deactivate_footer()  # No need to pass `id` since we delete all data
+
+            if success:
+                await query.edit_message_caption(
+                    caption="Footer has been Disabled ❌",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton('Enable Footer ✅', callback_data='set_footer')],
+                        [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                    ])
+                )
+            else:
+                await query.message.reply("Failed to disable the footer. Please try again.")
+
+        except Exception as e:
+            logging.error(f"Error occurred while disabling footer: {e}")
+            await query.message.reply("❌ **Error Occurred**\nPlease try again later.")
+
+# Disable Header
+    elif data == "disable_header":
+        id = query.from_user.id  # Get the user ID
+        await query.answer("♻️ Query Processing...")
+
+        try:
+        # Deactivate (delete all header data) in the database
+            success = await db.deactivate_header()  # No need to pass `id` since we delete all data
+
+            if success:
+                await query.edit_message_caption(
+                    caption="Header has been Disabled ❌",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton('Enable Header ✅', callback_data='set_header')],
+                        [InlineKeyboardButton('Close ✖️', callback_data='close')]
+                    ])
+                )
+            else:
+                await query.message.reply("Failed to disable the header. Please try again.")
+
+        except Exception as e:
+            logging.error(f"Error occurred while disabling header: {e}")
+            await query.message.reply("❌ **Error Occurred**\nPlease try again later.")
     
