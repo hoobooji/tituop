@@ -174,11 +174,11 @@ async def toggle_caption(client: Client, message: Message):
     """Toggles the caption state for the user."""
     
     # Check the current caption state (enabled or disabled)
-    current_state = await client.get_caption_state(message.from_user.id)
+    current_state = await db.get_caption_state(message.from_user.id)
 
     # Toggle the state
     new_state = not current_state
-    await client.set_caption_state(message.from_user.id, new_state)
+    await db.set_caption_state(message.from_user.id, new_state)
 
     # Create buttons for ✅ and ❌ based on the new state
     caption_button = InlineKeyboardButton(
