@@ -163,7 +163,7 @@ async def fetch_and_upload_content(client: Client, message: Message):
             footer = await db.get_footer(message.from_user.id) or ""
 
             # Get the caption state (whether it's enabled or not)
-            caption_enabled = await db.get_caption_state(message.from_user.id)
+            caption_enabled = await db.get_caption_state(message.from_user.id) or ""
 
             # Combine header, link, and footer
             final_message = f"{header}\n\n<b>Your content has been processed successfully:</b>\n{new_link}\n\n{footer}"
