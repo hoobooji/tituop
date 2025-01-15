@@ -4,6 +4,8 @@ import asyncio
 import tempfile
 import base64
 import os
+from telethon.errors import FloodWait
+from datetime import datetime
 from pyrogram import filters, Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode, ChatAction
@@ -82,20 +84,30 @@ async def channel_post(client: Client, message: Message):
     )
 
 
+
 @Bot.on_message(filters.private & is_admin & ~filters.command('save'))
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
-    # Extract the link from text or caption
-    link = None
-    if "https://t.me/" in (message.text or ""):
-        link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
-    elif "https://t.me/" in (message.caption or ""):
-        link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
-
-    if not link:
-        return  # Ignore messages without valid links
+    
+    # Ask the user to send a valid link
+    await message.reply_text("Please send the link to proceed (within 30 seconds):")
 
     try:
+        # Set timeout for 30 seconds
+        response_message = await client.wait_for_message(
+            chat_id=message.chat.id, 
+            timeout=30,  # Timeout in seconds
+            filters=filters.text
+        )
+        
+        # Extract the link from the user's response
+        link = None
+        if "https://t.me/" in (response_message.text or ""):
+            link = next((word for word in response_message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+
+        if not link:
+            return await message.reply_text("Invalid link! Please make sure the link is correct and contains '?start='.")
+
         # Parse the link
         link_parts = link.split("?start=")
         bot_username = link_parts[0].split("/")[-1]
@@ -179,83 +191,14 @@ async def fetch_and_upload_content(client: Client, message: Message):
             no_content_message = f"{header}\n\n<b>No new content was fetched after processing your link.</b>\n\n{footer}"
             await message.reply_text(no_content_message)
 
+    except asyncio.TimeoutError:
+        # If the user doesn't respond within 30 seconds
+        await message.reply_text("You took too long to send the link. Please try again.")
+
     except Exception as e:
         await message.reply_text(f"An error occurred: {e}")
-    finally:
-        await acc.stop()
-
-async def process_and_upload(client, acc, msg_type, response):
-    """Processes and uploads a single message to the database channel."""
-    temp_file_path = None
-    db_msg = None
-    try:
-        if msg_type in ["Document", "Video", "Photo", "Audio", "Animation"]:
-            # Use the original file name for media, ensuring proper file extension
-            if msg_type == "Photo":
-                temp_file_path = await acc.download_media(response.photo, file_name=f"{response.photo.file_id}.jpg")
-                db_msg = await client.send_photo(DB_CHANNEL, temp_file_path, caption=response.caption)
-
-            elif msg_type == "Video":
-                temp_file_path = await acc.download_media(response.video, file_name=f"{response.video.file_id}.mp4")
-                db_msg = await client.send_video(
-                    DB_CHANNEL,
-                    temp_file_path,
-                    caption=response.caption,
-                    duration=response.video.duration,  # Pass the duration
-                    width=response.video.width,  # Pass width and height
-                    height=response.video.height
-                )
-
-            elif msg_type == "Audio":
-                temp_file_path = await acc.download_media(response.audio, file_name=f"{response.audio.file_id}.mp3")
-                db_msg = await client.send_audio(
-                    DB_CHANNEL,
-                    temp_file_path,
-                    caption=response.caption,
-                    duration=response.audio.duration,  # Pass the duration
-                    performer=response.audio.performer,  # Optional: Retain performer
-                    title=response.audio.title  # Optional: Retain title
-                )
-
-            elif msg_type == "Document":
-                temp_file_path = await acc.download_media(response.document, file_name=response.document.file_name)
-                db_msg = await client.send_document(DB_CHANNEL, temp_file_path, caption=response.caption)
-
-            elif msg_type == "Animation":
-                temp_file_path = await acc.download_media(response.animation, file_name=f"{response.animation.file_id}.gif")
-                db_msg = await client.send_animation(DB_CHANNEL, temp_file_path, caption=response.caption)
 
     finally:
-        if temp_file_path and os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-
-    return db_msg  # Return the uploaded message object
-
-async def upload_to_db(client, msg_type, file_path, caption):
-    """Uploads media to the database channel."""
-    if msg_type == "Photo":
-        return await client.send_photo(DB_CHANNEL, file_path, caption=caption, parse_mode=enums.ParseMode.HTML)
-    elif msg_type == "Video":
-        return await client.send_video(DB_CHANNEL, file_path, caption=caption, parse_mode=enums.ParseMode.HTML)
-    elif msg_type == "Audio":
-        return await client.send_audio(DB_CHANNEL, file_path, caption=caption, parse_mode=enums.ParseMode.HTML)
-    elif msg_type == "Document":
-        return await client.send_document(DB_CHANNEL, file_path, caption=caption, parse_mode=enums.ParseMode.HTML)
-    elif msg_type == "Animation":
-        return await client.send_animation(DB_CHANNEL, file_path, caption=caption, parse_mode=enums.ParseMode.HTML)
-
-
-def get_message_type(msg):
-    """Identifies the type of the message."""
-    if msg.document: return "Document"
-    if msg.video: return "Video"
-    if msg.animation: return "Animation"
-    if msg.audio: return "Audio"
-    if msg.photo: return "Photo"
-    if msg.text: return "Text"
-    return None
-
-
-
-
-#rohit_1888 on tg
+        # Ensure to stop the client session if it was started
+        if 'acc' in locals():
+            await acc.stop()
