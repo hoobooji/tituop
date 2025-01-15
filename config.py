@@ -9,13 +9,13 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 #Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7542241757:AAG-Qx8U60UEQzB-3JF7ssayN8I4mkJp3eo")
 
 #Your API ID from my.telegram.org
-API_ID = int(os.environ.get("API_ID", ""))
+API_ID = int(os.environ.get("API_ID", "9698652"))
 
 #Your API Hash from my.telegram.org
-API_HASH = os.environ.get("API_HASH", "")
+API_HASH = os.environ.get("API_HASH", "b354710ab18b84e00b65c62ba7a9c043")
 
 #Your db channel Id
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002008354608"))
@@ -26,7 +26,7 @@ OWNER_ID = int(os.environ.get("OWNER_ID", "7328629001"))
 #Port
 PORT = os.environ.get("PORT", "6726")
 
-DB_URI = os.environ.get("DATABASE_URL", "")
+DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://koyeb77user:rohit870@cluster0.wgdkp.mongodb.net/?retryWrites=true&w=majority")
 DB_NAME = os.environ.get("DATABASE_NAME", "cphdlust1234")
 
 
@@ -50,7 +50,7 @@ QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/B7w.png")
 
 
 #set your Custom Caption here, Keep None for Disable Custom Caption
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>ʙʏ @Javpostr</b>")
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>Ê™Ê @Javpostr</b>")
 
 #Collection of pics for Bot // #Optional but atleast one pic link should be replaced if you don't want predefined links
 PICS = (os.environ.get("PICS", "https://envs.sh/4Iq.jpg https://envs.sh/4IW.jpg https://envs.sh/4IB.jpg https://envs.sh/4In.jpg")).split() #Required
@@ -104,7 +104,7 @@ PRICE5 = os.environ.get("PRICE5", "550 rs")
 DISABLE_CHANNEL_BUTTON = os.environ.get("True", True) == 'True'
 
 BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
-USER_REPLY_TEXT = "❌Don't send me messages directly I'm only File Sharing Bot!"
+USER_REPLY_TEXT = "âŒDon't send me messages directly I'm only File Sharing Bot!"
 
 
 
