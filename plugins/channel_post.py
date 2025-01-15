@@ -44,13 +44,13 @@ async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
     # Extract the link from text or caption
     link = None
-    if "https://t.me/" in (message.text or ""):
-        link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
-    elif "https://t.me/" in (message.caption or ""):
-        link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
+    if message.text:
+        link = next((word for word in message.text.split() if "/bot" in word and "?start=" in word), None)
+    elif message.caption:
+        link = next((word for word in message.caption.split() if "/bot" in word and "?start=" in word), None)
 
     if not link:
-        return  # Ignore messages without valid links
+        return  # Ignore messages without valid /bot links and ?start=
 
     try:
         # Parse the link
@@ -218,14 +218,14 @@ async def channel_post(client: Client, message: Message):
     
     # Extract the link from the message (text or caption)
     link = None
-    if "https://t.me/" in (message.text or ""):
-        link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
-    elif "https://t.me/" in (message.caption or ""):
-        link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
+    if message.text:
+        link = next((word for word in message.text.split() if "/bot" in word and "?start=" in word), None)
+    elif message.caption:
+        link = next((word for word in message.caption.split() if "/bot" in word and "?start=" in word), None)
 
-    if not link:
-        return await reply_text.edit_text("No valid t.me/ link found in the message. Aborting the process.")
-    
+    if link:
+        # Skip processing for links with /bot and ?start=
+        return    
     try:
         # Proceed with posting the message to the database channel
         post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
