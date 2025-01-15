@@ -43,7 +43,7 @@ async def decode(base64_string: str) -> list:
     'status', 'req_fsub', 'myplan', 'login', 'header', 'footer', 'save', 'caption', 'logout']))
 
 
-@Bot.on_message(filters.private & ~filters.command & is_admin)
+@Bot.on_message(filters.private & ~filters.command() & is_admin)
 async def handle_incoming_message(client: Client, message: Message):
     keyboard = InlineKeyboardMarkup(
         [
