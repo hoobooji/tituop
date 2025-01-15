@@ -216,30 +216,16 @@ def get_message_type(msg):
 
 
 async def channel_post(client: Client, message: Message):
-    reply_text = await message.reply_text("Please Wait...!", quote=True)
-    
-    # Extract the link from the message (text or caption)
-    link = None
-    if message.text:
-        link = next((word for word in message.text.split() if "/bot" in word and "?start=" in word), None)
-    elif message.caption:
-        link = next((word for word in message.caption.split() if "/bot" in word and "?start=" in word), None)
-
-    if link:
-        # Skip processing for links with /bot and ?start=
-        return    
+    reply_text = await message.reply_text("Please Wait...!", quote = True)
     try:
-        # Proceed with posting the message to the database channel
-        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
+        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
+        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
     except Exception as e:
         print(e)
-        await reply_text.edit_text("Something went wrong..!")
+        await reply_text.edit_text("Something went Wrong..!")
         return
-
-    # Generate the link with the message ID
     converted_id = post_message.id * abs(client.db_channel.id)
     string = f"get-{converted_id}"
     base64_string = await encode(string)
@@ -250,7 +236,6 @@ async def channel_post(client: Client, message: Message):
     base64_string = await encode(string)
     link1 = f"https://telegram.me/{client.username}?start={base64_string}"
 
-    # Create the inline keyboard with both links
     keyboard = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton("Public Link", url=link)],
@@ -258,12 +243,10 @@ async def channel_post(client: Client, message: Message):
         ]
     )
 
-    # Send the final message with the inline keyboard
     await reply_text.edit(
         "<b>> Your Links</b>",
         disable_web_page_preview=True,
         reply_markup=keyboard
     )
-
 
 #rohit_1888 on tg
