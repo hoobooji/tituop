@@ -39,20 +39,56 @@ async def decode(base64_string: str) -> list:
     'start', 'users', 'broadcast', 'batch', 'genlink', 'stats', 'addpaid', 'removepaid', 'listpaid',
     'help', 'cmd', 'info', 'add_fsub', 'fsub_chnl', 'restart', 'del_fsub', 'add_admins', 'del_admins', 
     'admin_list', 'cancel', 'auto_del', 'forcesub', 'files', 'add_banuser', 'token', 'del_banuser', 'banuser_list', 
-    'status', 'req_fsub', 'myplan', 'login', 'header', 'footer'
+    'status', 'req_fsub', 'myplan', 'login', 'header', 'footer', 'save'
 ]))
 
+async def channel_post(client: Client, message: Message):
+    reply_text = await message.reply_text("Please Wait...!", quote = True)
+    try:
+        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
+    except Exception as e:
+        print(e)
+        await reply_text.edit_text("Something went Wrong..!")
+        return
+    converted_id = post_message.id * abs(client.db_channel.id)
+    string = f"get-{converted_id}"
+    base64_string = await encode(string)
+    link = f"https://telegram.me/{client.username}?start={base64_string}"
+
+    string = f"get-{converted_id}"
+    string = string.replace("get-", "premium-")
+    base64_string = await encode(string)
+    link1 = f"https://telegram.me/{client.username}?start={base64_string}"
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("Public Link", url=link)],
+            [InlineKeyboardButton("Premium User", url=link1)]
+        ]
+    )
+
+    await reply_text.edit(
+        "<b>> Your Links</b>",
+        disable_web_page_preview=True,
+        reply_markup=keyboard
+    )
+
+
+@Bot.on_message(filters.private & is_admin & ~filters.command('save'))
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
     # Extract the link from text or caption
     link = None
-    if message.text:
-        link = next((word for word in message.text.split() if "/bot" in word and "?start=" in word), None)
-    elif message.caption:
-        link = next((word for word in message.caption.split() if "/bot" in word and "?start=" in word), None)
+    if "https://t.me/" in (message.text or ""):
+        link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+    elif "https://t.me/" in (message.caption or ""):
+        link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
 
     if not link:
-        return  # Ignore messages without valid /bot links and ?start=
+        return  # Ignore messages without valid links
 
     try:
         # Parse the link
@@ -215,38 +251,6 @@ def get_message_type(msg):
     return None
 
 
-async def channel_post(client: Client, message: Message):
-    reply_text = await message.reply_text("Please Wait...!", quote = True)
-    try:
-        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
-    except Exception as e:
-        print(e)
-        await reply_text.edit_text("Something went Wrong..!")
-        return
-    converted_id = post_message.id * abs(client.db_channel.id)
-    string = f"get-{converted_id}"
-    base64_string = await encode(string)
-    link = f"https://telegram.me/{client.username}?start={base64_string}"
 
-    string = f"get-{converted_id}"
-    string = string.replace("get-", "premium-")
-    base64_string = await encode(string)
-    link1 = f"https://telegram.me/{client.username}?start={base64_string}"
-
-    keyboard = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("Public Link", url=link)],
-            [InlineKeyboardButton("Premium User", url=link1)]
-        ]
-    )
-
-    await reply_text.edit(
-        "<b>> Your Links</b>",
-        disable_web_page_preview=True,
-        reply_markup=keyboard
-    )
 
 #rohit_1888 on tg
