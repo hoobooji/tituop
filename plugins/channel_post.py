@@ -87,7 +87,7 @@ async def channel_post(client: Client, message: Message):
 @Bot.on_message(filters.command('save') & filters.private & is_admin)
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
-    
+
     # Ask the user to send a valid link
     await message.reply_text("Please send the link to proceed (within 30 seconds):")
 
@@ -98,7 +98,7 @@ async def fetch_and_upload_content(client: Client, message: Message):
             timeout=30,  # Timeout in seconds
             filters=filters.text
         )
-        
+
         # Extract the link from the user's response
         link = None
         if "https://t.me/" in (response_message.text or ""):
@@ -162,11 +162,14 @@ async def fetch_and_upload_content(client: Client, message: Message):
             header = await db.get_header(message.from_user.id) or ""
             footer = await db.get_footer(message.from_user.id) or ""
 
+            # Get the caption state (whether it's enabled or not)
+            caption_enabled = await db.get_caption_state(message.from_user.id)
+
             # Combine header, link, and footer
             final_message = f"{header}\n\n<b>Your content has been processed successfully:</b>\n{new_link}\n\n{footer}"
 
             # Replace only the link in the caption
-            if message.caption:  # For photo messages with captions
+            if message.caption and caption_enabled:  # For photo messages with captions and captions enabled
                 updated_caption = f"{header}\n\n{message.caption.replace(link, new_link)}\n\n{footer}"
                 await message.reply_photo(
                     photo=message.photo.file_id,
@@ -175,7 +178,7 @@ async def fetch_and_upload_content(client: Client, message: Message):
                         [InlineKeyboardButton("🔗 Share Link", url=f'https://telegram.me/share/url?url={new_link}')]
                     ])
                 )
-            else:  # For text messages or captions without a photo
+            else:  # For text messages or captions without a photo, or if captions are disabled
                 reply_markup = InlineKeyboardMarkup([
                     [InlineKeyboardButton("🔗 Share Link", url=f'https://telegram.me/share/url?url={new_link}')]
                 ])
