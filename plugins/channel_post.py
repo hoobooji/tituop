@@ -93,20 +93,20 @@ async def fetch_and_upload_content(client: Client, message: Message):
     try:
         # Set timeout for 30 seconds
         response_message = await client.wait_for_message(
-            chat_id=message.chat.id, 
+            chat_id=message.chat.id,
             timeout=30,  # Timeout in seconds
             filters=filters.text
         )
 
         # Extract the link from the user's response
-            link = None
-            if "https://t.me/" in (message.text or ""):
-                link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
-            elif "https://t.me/" in (message.caption or ""):
-                link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
+        link = None
+        if "https://t.me/" in (message.text or ""):
+            link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+        elif "https://t.me/" in (message.caption or ""):
+            link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
 
-            if not link:
-                return  # Ignore messages without valid links
+        if not link:
+            return  # Ignore messages without valid links
 
         # Parse the link
         link_parts = link.split("?start=")
