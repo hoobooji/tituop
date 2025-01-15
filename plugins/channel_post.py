@@ -43,7 +43,7 @@ async def decode(base64_string: str) -> list:
     'status', 'req_fsub', 'myplan', 'login', 'header', 'footer', 'save', 'caption', 'logout']))
 
 
-@Bot.on_message(filters.private & ~filters.command)
+@Bot.on_message(filters.private & ~filters.command & is_admin)
 async def handle_incoming_message(client: Client, message: Message):
     keyboard = InlineKeyboardMarkup(
         [
@@ -56,6 +56,44 @@ async def handle_incoming_message(client: Client, message: Message):
         reply_markup=keyboard
     )
 
+async def channel_post(client: Client, message: Message):
+    reply_text = await message.reply_text("Please Wait...!", quote=True)
+    try:
+        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
+    except Exception as e:
+        print(e)
+        await reply_text.edit_text("Something went Wrong..!")
+        return
+
+    converted_id = post_message.id * abs(client.db_channel.id)
+    string = f"get-{converted_id}"
+    
+    # Assuming encode is a regular function and not async
+    base64_string = encode(string)  # No await needed here
+    link = f"https://telegram.me/{client.username}?start={base64_string}"
+
+    string = f"get-{converted_id}"
+    string = string.replace("get-", "premium-")
+    
+    # No await here as well
+    base64_string = encode(string)  # No await needed
+    link1 = f"https://telegram.me/{client.username}?start={base64_string}"
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("Public Link", url=link)],
+            [InlineKeyboardButton("Premium User", url=link1)]
+        ]
+    )
+
+    await reply_text.edit(
+        "<b>> Your Links</b>",
+        disable_web_page_preview=True,
+        reply_markup=keyboard
+    )
 
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
