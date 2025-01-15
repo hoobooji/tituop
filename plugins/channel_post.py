@@ -84,7 +84,7 @@ async def channel_post(client: Client, message: Message):
 
 
 
-@Bot.on_message(filters.private & is_admin & ~filters.command('save'))
+@Bot.on_message(filters.command('save') & filters.private & is_admin)
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
     
