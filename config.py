@@ -12,7 +12,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7223199796:AAFxWdi9QlmEkZWlV39-g3GSLiGRchX7Nys")
 
 #Your API ID from my.telegram.org
-APP_ID = int(os.environ.get("APP_ID", "9698652"))
+API_ID = int(os.environ.get("API_ID", "9698652"))
 
 #Your API Hash from my.telegram.org
 API_HASH = os.environ.get("API_HASH", "b354710ab18b84e00b65c62ba7a9c043")
