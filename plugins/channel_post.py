@@ -42,6 +42,21 @@ async def decode(base64_string: str) -> list:
     'admin_list', 'cancel', 'auto_del', 'forcesub', 'files', 'add_banuser', 'token', 'del_banuser', 'banuser_list', 
     'status', 'req_fsub', 'myplan', 'login', 'header', 'footer', 'save', 'caption', 'logout']))
 
+
+@Bot.on_message(filters.private & ~filters.command)
+async def handle_incoming_message(client: Client, message: Message):
+    keyboard = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("Get Content", callback_data="get_content")],
+            [InlineKeyboardButton("Generate Link", callback_data="generate_link")],
+        ]
+    )
+    await message.reply_text(
+        "Please choose an action:",
+        reply_markup=keyboard
+    )
+
+
 async def fetch_and_upload_content(client: Client, message: Message):
     """Fetches restricted content, processes it, and uploads it with header and footer."""
     # Extract the link from text or caption
