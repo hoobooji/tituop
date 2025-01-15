@@ -1,4 +1,5 @@
 import traceback
+from bot import Bot
 from pyrogram.types import Message
 from pyrogram import Client, filters
 from asyncio.exceptions import TimeoutError
@@ -17,7 +18,7 @@ from database.database import *
 
 SESSION_STRING_SIZE = 351
 
-@Client.on_message(filters.private & is_admin & filters.command('logout'))
+@Bot.on_message(filters.private & is_admin & filters.command('logout'))
 async def logout(client, message):
     user_data = await db.get_session(message.from_user.id)  
     if user_data is None:
@@ -25,7 +26,7 @@ async def logout(client, message):
     await db.set_session(message.from_user.id, session=None)  
     await message.reply("**Logout Successfully** ♦")
 
-@Client.on_message(filters.private & is_admin & filters.command('login'))
+@Bot.on_message(filters.private & is_admin & filters.command('login'))
 async def main(bot: Client, message: Message):
     user_data = await db.get_session(message.from_user.id)
     if user_data is not None:
@@ -79,3 +80,88 @@ async def main(bot: Client, message: Message):
     except Exception as e:
         return await message.reply_text(f"<b>ERROR IN LOGIN:</b> `{e}`")
     await bot.send_message(message.from_user.id, "<b>Account Login Successfully.\n\nIf You Get Any Error Then /logout first and /login again</b>")
+
+
+@Bot.on_message(filters.command('header') & filters.private & is_admin)
+async def set_header(client, message):
+    await message.reply_chat_action(ChatAction.TYPING)
+
+    try:
+        # Fetch header status and text from the database
+        header_text = await db.get_header(message.from_user.id)
+        if header_text:
+            header_status = "Enabled ✅"
+            mode_button = InlineKeyboardButton('Disable Header ❌', callback_data='disable_header')
+        else:
+            header_status = "Disabled ❌"
+            mode_button = InlineKeyboardButton('Enable Header ✅', callback_data='set_header')
+
+        # Send the settings message with options
+        caption = f"🔖 **Header Settings**\n\n**Header Status:** {header_status}\n\nUse the options below to configure the header."
+
+        if header_text:
+            caption += f"\n\n**Current Header Text:**\n{header_text}"
+
+        await message.reply_photo(
+            photo=START_PIC,
+            caption=caption,
+            reply_markup=InlineKeyboardMarkup([
+                [mode_button],
+                [InlineKeyboardButton('Set Header', callback_data='set_header')],
+                [InlineKeyboardButton('Close ✖️', callback_data='close')]
+            ])
+        )
+    except Exception as e:
+        # Log and send error
+        logging.error(f"Error in set_header command: {e}")
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+        await message.reply(
+            (
+                f"❌ **Error Occurred:**\n\n"
+                f"**Reason:** {e}\n\n"
+                f"📩 Contact developer: [Rohit](https://t.me/rohit_1888)"
+            ),
+            reply_markup=reply_markup
+        )
+
+@Bot.on_message(filters.command('footer') & filters.private & is_admin)
+async def set_footer(client, message):
+    await message.reply_chat_action(ChatAction.TYPING)
+
+    try:
+        # Fetch footer status and text from the database
+        footer_text = await db.get_footer(message.from_user.id)
+        if footer_text:
+            footer_status = "Enabled ✅"
+            mode_button = InlineKeyboardButton('Disable Footer ❌', callback_data='disable_footer')
+        else:
+            footer_status = "Disabled ❌"
+            mode_button = InlineKeyboardButton('Enable Footer ✅', callback_data='set_footer')
+
+        # Send the settings message with options
+        caption = f"📄 **Footer Settings**\n\n**Footer Status:** {footer_status}\n\nUse the options below to configure the footer."
+
+        if footer_text:
+            caption += f"\n\n**Current Footer Text:**\n{footer_text}"
+
+        await message.reply_photo(
+            photo=FORCE_PIC,
+            caption=caption,
+            reply_markup=InlineKeyboardMarkup([
+                [mode_button],
+                [InlineKeyboardButton('Set Footer', callback_data='set_footer')],
+                [InlineKeyboardButton('Close ✖️', callback_data='close')]
+            ])
+        )
+    except Exception as e:
+        # Log and send error
+        logging.error(f"Error in set_footer command: {e}")
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Close ✖️", callback_data="close")]])
+        await message.reply(
+            (
+                f"❌ **Error Occurred:**\n\n"
+                f"**Reason:** {e}\n\n"
+                f"📩 Contact developer: [Rohit](https://t.me/rohit_1888)"
+            ),
+            reply_markup=reply_markup
+        )
