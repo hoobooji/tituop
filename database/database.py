@@ -55,6 +55,8 @@ class Rohit:
         self.protect_content_data = self.database['protect_content']
         self.channel_button_data = self.database['channel_button']
         self.login_data = self.database['login']
+        self.header_data = self.database['header']
+        self.footer_data = self.database['footer']
 
         self.settings_data = self.database['settings']
         self.del_timer_data = self.database['del_timer']
@@ -65,6 +67,74 @@ class Rohit:
         self.store_reqLink_data = self.database['store_reqLink']
 
 
+    # Database Methods to Set, Get, and Deactivate Header/Footer
+
+# Adding header/footer fields to the database
+    async def set_header(self, user_id: int, header_text: str):
+        try:
+            result = await self.header_data.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "header.text": header_text,
+                    "header.active": True
+                }
+            },
+            upsert=True
+        )
+        return result.modified_count > 0 or result.upserted_id is not None
+    except Exception as e:
+        logging.error(f"Error setting header for user {user_id}: {e}")
+        return False
+
+async def set_footer(self, user_id: int, footer_text: str):
+    try:
+        result = await self.footer_data.update_one(
+            {"_id": user_id},
+            {
+                "$set": {
+                    "footer.text": footer_text,
+                    "footer.active": True
+                }
+            },
+            upsert=True
+        )
+        return result.modified_count > 0 or result.upserted_id is not None
+    except Exception as e:
+        logging.error(f"Error setting footer for user {user_id}: {e}")
+        return False
+
+# Methods for retrieving header/footer text
+async def get_header(self, user_id: int):
+    user = await self.header_data.find_one({"_id": user_id})
+    return user.get("header", {}).get("text", "") if user else ""
+
+async def get_footer(self, user_id: int):
+    user = await self.footer_data.find_one({"_id": user_id})
+    return user.get("footer", {}).get("text", "") if user else ""
+
+# Methods to deactivate header/footer
+async def deactivate_header(self, user_id: int):
+    try:
+        result = await self.header_data.update_one(
+            {"_id": user_id},
+            {"$set": {"header.active": False, "header.text": ""}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logging.error(f"Error deactivating header for user {user_id}: {e}")
+        return False
+
+async def deactivate_footer(self, user_id: int):
+    try:
+        result = await self.footer_data.update_one(
+            {"_id": user_id},
+            {"$set": {"footer.active": False, "footer.text": ""}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logging.error(f"Error deactivating footer for user {user_id}: {e}")
+        return False
     #login data
     async def set_session(self, user_id: int, session: str):
         """Store or update the user's session string in the database."""
