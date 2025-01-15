@@ -1098,7 +1098,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
         try:
         # Deactivate (delete all footer data) in the database
-            success = await db.deactivate_footer()  # No need to pass `id` since we delete all data
+            success = await db.deactivate_footer(id)  # No need to pass `id` since we delete all data
 
             if success:
                 await query.edit_message_caption(
@@ -1122,7 +1122,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
         try:
         # Deactivate (delete all header data) in the database
-            success = await db.deactivate_header()  # No need to pass `id` since we delete all data
+            success = await db.deactivate_header(id)  # No need to pass `id` since we delete all data
 
             if success:
                 await query.edit_message_caption(
