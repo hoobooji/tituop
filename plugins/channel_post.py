@@ -214,16 +214,30 @@ def get_message_type(msg):
 
 
 async def channel_post(client: Client, message: Message):
-    reply_text = await message.reply_text("Please Wait...!", quote = True)
+    reply_text = await message.reply_text("Please Wait...!", quote=True)
+    
+    # Extract the link from the message (text or caption)
+    link = None
+    if "https://t.me/" in (message.text or ""):
+        link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+    elif "https://t.me/" in (message.caption or ""):
+        link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
+
+    if not link:
+        return await reply_text.edit_text("No valid t.me/ link found in the message. Aborting the process.")
+    
     try:
-        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
+        # Proceed with posting the message to the database channel
+        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        post_message = await message.copy(chat_id = client.db_channel.id, disable_notification=True)
+        post_message = await message.copy(chat_id=client.db_channel.id, disable_notification=True)
     except Exception as e:
         print(e)
-        await reply_text.edit_text("Something went Wrong..!")
+        await reply_text.edit_text("Something went wrong..!")
         return
+
+    # Generate the link with the message ID
     converted_id = post_message.id * abs(client.db_channel.id)
     string = f"get-{converted_id}"
     base64_string = await encode(string)
@@ -234,6 +248,7 @@ async def channel_post(client: Client, message: Message):
     base64_string = await encode(string)
     link1 = f"https://telegram.me/{client.username}?start={base64_string}"
 
+    # Create the inline keyboard with both links
     keyboard = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton("Public Link", url=link)],
@@ -241,10 +256,12 @@ async def channel_post(client: Client, message: Message):
         ]
     )
 
+    # Send the final message with the inline keyboard
     await reply_text.edit(
         "<b>> Your Links</b>",
         disable_web_page_preview=True,
         reply_markup=keyboard
     )
 
-# Don't remove This Line From Here. Tg: @im_piro | @PiroHackz
+
+#rohit_1888 on tg
