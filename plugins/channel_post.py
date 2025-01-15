@@ -107,7 +107,6 @@ async def fetch_and_upload_content(client: Client, message: Message):
 
         if not link:
             return  # Ignore messages without valid links
-
         # Parse the link
         link_parts = link.split("?start=")
         bot_username = link_parts[0].split("/")[-1]
