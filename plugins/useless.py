@@ -22,8 +22,6 @@ async def stats(bot: Bot, message: Message):
 @Bot.on_message(filters.private & filters.incoming)
 async def useless(_, message: Message):
     # Check if the user is in the admin list
-    if is_admin:
-        return  # Don't reply if the user is an admin
-
-    if USER_REPLY_TEXT:
-        await message.reply(USER_REPLY_TEXT)
+    if not is_admin:
+        if USER_REPLY_TEXT:
+            await message.reply(USER_REPLY_TEXT)
