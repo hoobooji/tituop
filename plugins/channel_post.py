@@ -4,7 +4,6 @@ import asyncio
 import tempfile
 import base64
 import os
-from telethon.errors import FloodWait
 from datetime import datetime
 from pyrogram import filters, Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
