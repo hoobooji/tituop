@@ -1145,17 +1145,18 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         user_id = callback_query.from_user.id
     # Get the current caption state and toggle it
         current_state = await client.get_caption_state(user_id)
-    new_state = not current_state
-    await client.set_caption_state(user_id, new_state)
+        new_state = not current_state
+        await client.set_caption_state(user_id, new_state)
 
     # Update the button text dynamically
-    caption_button_text = "✅ Captions Enabled" if new_state else "❌ Captions Disabled"
+        caption_button_text = "✅ Captions Enabled" if new_state else "❌ Captions Disabled"
 
     # Edit the message with the new button
-    await callback_query.message.edit_text(
-        f"Captions are now {'enabled' if new_state else 'disabled'}.",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(caption_button_text, callback_data="toggle_caption")]
-        ])
-    )
+        await callback_query.message.edit_text(
+            f"Captions are now {'enabled' if new_state else 'disabled'}.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(caption_button_text, callback_data="toggle_caption"),
+                 InlineKeyboardButton("🔒 Close", callback_data="close")]
+            ])
+        )
     
