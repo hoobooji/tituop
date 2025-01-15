@@ -99,12 +99,14 @@ async def fetch_and_upload_content(client: Client, message: Message):
         )
 
         # Extract the link from the user's response
-        link = None
-        if "https://t.me/" in (response_message.text or ""):
-            link = next((word for word in response_message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+            link = None
+            if "https://t.me/" in (message.text or ""):
+                link = next((word for word in message.text.split() if "https://t.me/" in word and "?start=" in word), None)
+            elif "https://t.me/" in (message.caption or ""):
+                link = next((word for word in message.caption.split() if "https://t.me/" in word and "?start=" in word), None)
 
-        if not link:
-            return 
+            if not link:
+                return  # Ignore messages without valid links
 
         # Parse the link
         link_parts = link.split("?start=")
