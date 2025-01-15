@@ -1158,4 +1158,12 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                  InlineKeyboardButton("🔒 Close", callback_data="close")]
                 ])
             )
+
     
+    elif data == "get_content":
+        await callback_query.answer()  # Acknowledge the callback
+        await fetch_and_upload_content(client, callback_query.message)
+
+    elif data == "generate_link":
+        await callback_query.answer()  # Acknowledge the callback
+        await channel_post(client, callback_query.message)
