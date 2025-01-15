@@ -9,6 +9,30 @@ from bot import Bot
 from config import OWNER_ID, CHANNEL_ID, DISABLE_CHANNEL_BUTTON
 from helper_func import *
 
+
+DB_CHANNEL = CHANNEL_ID
+FILE_SIZE_LIMIT = 1 * 1024 * 1024 * 1024  # 1GB limit
+
+
+def encode(data: str) -> str:
+    """Encodes the input data into a base64 format with stripped padding."""
+    encoded = base64.urlsafe_b64encode(data.encode("utf-8")).decode("utf-8")
+    return encoded.strip("=")  # Strip padding for cleaner URLs
+
+
+async def decode(base64_string: str) -> list:
+    """Decodes a base64 string and returns a list of message IDs."""
+    base64_string = base64_string.strip("=")
+    base64_bytes = (base64_string + "=" * (-len(base64_string) % 4)).encode("ascii")
+    string = base64.urlsafe_b64decode(base64_bytes).decode("utf-8")
+
+    # Parse the string to extract message IDs
+    if string.startswith("get-"):
+        ids = string[4:].split(",")
+        return [int(msg_id) for msg_id in ids]  # Convert IDs back to integers
+    return []
+
+
 @Bot.on_message(filters.private & is_admin & ~filters.command([
     'start', 'users', 'broadcast', 'batch', 'genlink', 'stats', 'addpaid', 'removepaid', 'listpaid',
     'help', 'cmd', 'info', 'add_fsub', 'fsub_chnl', 'restart', 'del_fsub', 'add_admins', 'del_admins', 
