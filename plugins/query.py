@@ -1141,7 +1141,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
 
     elif data == "toggle_caption":
-    """Handles the callback from the toggle caption button."""
         user_id = callback_query.from_user.id
     # Get the current caption state and toggle it
         current_state = await client.get_caption_state(user_id)
@@ -1157,6 +1156,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton(caption_button_text, callback_data="toggle_caption"),
                  InlineKeyboardButton("🔒 Close", callback_data="close")]
-            ])
-        )
+                ])
+            )
     
