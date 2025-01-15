@@ -6,6 +6,7 @@ import base64
 import os
 from pyrogram import filters, Client, enums
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.enums import ParseMode, ChatAction
 from bot import Bot
 from config import *
 from database.database import *
