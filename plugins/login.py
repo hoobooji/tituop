@@ -12,9 +12,10 @@ from pyrogram.errors import (
     SessionPasswordNeeded,
     PasswordHashInvalid
 )
-from config import API_ID, API_HASH
+from config import *
 from helper_func import*
 from database.database import *
+from plugins.query import *
 
 SESSION_STRING_SIZE = 351
 
