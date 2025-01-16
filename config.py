@@ -42,7 +42,7 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 START_PIC = os.environ.get("START_PIC", "https://envs.sh/Nr_.jpg")
 FORCE_PIC = os.environ.get("FORCE_PIC", "https://envs.sh/Nr_.jpg")
 
-QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/NrT.jpg")
+QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/Nr_.jpg")
 
 
 
