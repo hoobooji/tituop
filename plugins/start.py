@@ -278,12 +278,11 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
+                [InlineKeyboardButton('BUY PREMIUM REMOVE ALL ADS', callback_data='buy_prem')],
+                [InlineKeyboardButton('⛩️ NOTTY UNIVERSE', url='https://t.me/zenotty')],
+                [InlineKeyboardButton('🌐 𝖥𝗈𝗅𝗅𝗈𝗐 𝖴𝖲 𝖮𝗇 𝖨𝖭𝖲𝖳𝖠𝖦𝖱𝖠𝖬', url='https://insta.openinapp.co/bwpa4')],
                 [InlineKeyboardButton("😊 About Me", callback_data="about"),
                  InlineKeyboardButton("🔒 Close", callback_data="close")],
-                [InlineKeyboardButton('BUY PREMIUM REMOVE ALL ADS', callback_data='buy_prem')],
-                [InlineKeyboardButton('⛩️ NOTTY UNIVERSE', url='https://t.me/zenotty'),
-                 InlineKeyboardButton('⚡️ Support', url='https://t.me/zenotty')],
-                [InlineKeyboardButton('🌐 𝖥𝗈𝗅𝗅𝗈𝗐 𝖴𝖲 𝖮𝗇 𝖨𝖭𝖲𝖳𝖠𝖦𝖱𝖠𝖬', url='https://insta.openinapp.co/bwpa4')]
             ]
         )
 
