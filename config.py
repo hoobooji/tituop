@@ -72,7 +72,7 @@ OWNER_TAG = os.environ.get("OWNER_TAG", "zenotty")
 UPI_ID = os.environ.get("UPI_ID", "@zenotty")
 
 #UPI QR CODE IMAGE
-UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://envs.sh/NrS.jpg")
+UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://envs.sh/Nr_.jpg")
 
 #SCREENSHOT URL of ADMIN for verification of payments
 SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/zenotty")
@@ -82,19 +82,19 @@ SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/zenotty")
 #Time and its price
 
 #7 Days
-PRICE1 = os.environ.get("PRICE1", "0 rs")
+PRICE1 = os.environ.get("PRICE1", "169 rs")
 
 #1 Month
-PRICE2 = os.environ.get("PRICE2", "60 rs")
+PRICE2 = os.environ.get("PRICE2", "269 rs")
 
 #3 Month
-PRICE3 = os.environ.get("PRICE3", "150 rs")
+PRICE3 = os.environ.get("PRICE3", "369 rs")
 
 #6 Month
-PRICE4 = os.environ.get("PRICE4", "280 rs")
+PRICE4 = os.environ.get("PRICE4", "469 rs")
 
 #1 Year
-PRICE5 = os.environ.get("PRICE5", "550 rs")
+PRICE5 = os.environ.get("PRICE5", "669 rs")
 
 
 #===================(END)========================#
