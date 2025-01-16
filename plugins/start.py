@@ -94,7 +94,7 @@ async def start_command(client: Client, message: Message):
         elif string.startswith("premium"):
             if not is_premium:
                 return await message.reply(
-                    "Buy premium to access this content.\nTo buy, contact @rohit_1888",
+                    "Buy premium to access this content.\nTo buy, contact @Zenotty",
                     reply_markup=PREMIUM_BUTTON2
                 )
 
@@ -562,8 +562,8 @@ async def fsub_commands(client: Client, message: Message):
 async def help(client: Client, message: Message):
     buttons = [
         [
-            InlineKeyboardButton("🤖 Oᴡɴᴇʀ", url=f"tg://openmessage?user_id={OWNER_ID}"), 
-            InlineKeyboardButton("🥰 Dᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/rohit1888")
+            InlineKeyboardButton("🤖 Oᴡɴᴇʀ", url="https://t.me/Zenotty"), 
+            InlineKeyboardButton("🥰 Dᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/Zenotty")
         ]
     ]
     
@@ -582,4 +582,4 @@ async def help(client: Client, message: Message):
             message_effect_id = 5046509860389126442 #🎉
         )
     except Exception as e:
-        return await message.reply(f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @Shidoteshika1</i></b>\n<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
+        return await message.reply(f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @Zenotty </i></b>\n<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>")
