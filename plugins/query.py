@@ -98,7 +98,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     elif data == "about":
         await query.message.edit_text(
             text=(
-                f"<b>○ Updates : <a href='https://t.me/rohit_1888'>Rohit</a>\n"
+                f"<b>○ Updates : <a href='https://t.me/@Zenotty'>Zenotty</a>\n"
                 f"○ Language : <code>Python3</code>\n"
                 f"○ Library : <a href='https://docs.pyrogram.org/'>Pyrogram asyncio {__version__}</a>"
             ),
@@ -837,7 +837,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             except Exception as e:
             # If an error occurs, display an error message with a contact option
                 await query.message.edit_text(
-                    f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @rohit_1888</i></b>",
+                    f"<b>! Error Occurred..\n<blockquote>Reason:</b> {e}</blockquote><b><i>Contact developer: @Zenotty</i></b>",
                     reply_markup=InlineKeyboardMarkup(
                         [[InlineKeyboardButton("Close ✖️", callback_data="close")]]
                     )
