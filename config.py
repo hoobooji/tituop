@@ -42,7 +42,7 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 START_PIC = os.environ.get("START_PIC", "https://telegra.ph/file/ec17880d61180d3312d6a.jpg")
 FORCE_PIC = os.environ.get("FORCE_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg")
 
-QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/B7w.png")
+QR_PIC = os.environ.get("QR_PIC", "https://envs.sh/NrS.jpg")
 
 
 
@@ -69,10 +69,10 @@ PREMIUM_BUTTON2 = reply_markup=InlineKeyboardMarkup(
 OWNER_TAG = os.environ.get("OWNER_TAG", "zenotty")
 
 #UPI ID
-UPI_ID = os.environ.get("UPI_ID", "rohit23pnb@axl")
+UPI_ID = os.environ.get("UPI_ID", "@amharshu@ybl")
 
 #UPI QR CODE IMAGE
-UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://t.me/paymentbot6/2")
+UPI_IMAGE_URL = os.environ.get("UPI_IMAGE_URL", "https://envs.sh/NrS.jpg")
 
 #SCREENSHOT URL of ADMIN for verification of payments
 SCREENSHOT_URL = os.environ.get("SCREENSHOT_URL", f"t.me/zenotty")
