@@ -120,7 +120,7 @@ async def set_header(client, message):
             (
                 f"❌ **Error Occurred:**\n\n"
                 f"**Reason:** {e}\n\n"
-                f"📩 Contact developer: [ZENOTTY](https://t.me/Zenotty)"
+                f"📩 Contact developer: [TituBadmosh](https://t.me/Titubadmosh)"
             ),
             reply_markup=reply_markup
         )
@@ -162,7 +162,7 @@ async def set_footer(client, message):
             (
                 f"❌ **Error Occurred:**\n\n"
                 f"**Reason:** {e}\n\n"
-                f"📩 Contact developer: [ZENOTTY](https://t.me/Zenotty)"
+                f"📩 Contact developer: [TituBadmosh](https://t.me/Titubadmosh)"
             ),
             reply_markup=reply_markup
         )
